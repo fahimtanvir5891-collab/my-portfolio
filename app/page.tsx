@@ -28,7 +28,7 @@ export default async function Home() {
           Scaling Brands with <br /> Data-Driven Ads.
         </h1>
         <p className="text-gray-400 text-xl max-w-2xl mx-auto mb-10">
-          Hi, I'm Tanvir. I help businesses generate high-quality leads using
+          Hi, I'm Tanvir kabir. I help businesses generate high-quality leads using
           Strategic Meta Ads & Server-Side Tracking.
         </p>
         <Link href="#work" className="px-8 py-3 bg-white text-black font-bold rounded-full hover:bg-gray-200 transition">
