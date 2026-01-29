@@ -24,3 +24,49 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* --- রেলগাড়ি অ্যানিমেশন (Train Animation) --- */
+@keyframes scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll {
+  display: flex;
+  width: max-content;
+  animation: scroll 30s linear infinite;
+}
+
+.animate-scroll-slow {
+  display: flex;
+  width: max-content;
+  animation: scroll 60s linear infinite;
+}
+
+/* মাউস ধরলে থামবে */
+.animate-scroll:hover, 
+.animate-scroll-slow:hover {
+  animation-play-state: paused;
+}
+
+/* দুই পাশে ঝাপসা ইফেক্ট (Fade Effect) */
+.mask-linear-fade {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  );
+}

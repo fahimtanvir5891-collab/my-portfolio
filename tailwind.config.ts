@@ -8,12 +8,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      // এই যে আমাদের ট্রেনের ইঞ্জিন (Animation)
       animation: {
-        scroll: "scroll 30s linear infinite", // লোগোর জন্য ফাস্ট স্পিড
-        "scroll-slow": "scroll 50s linear infinite", // রিভিউয়ের জন্য স্লো স্পিড
+        scroll: "scroll 30s linear infinite",
+        "scroll-slow": "scroll 60s linear infinite",
       },
-      // ট্রেনের চাকা (Keyframes)
       keyframes: {
         scroll: {
           to: {
