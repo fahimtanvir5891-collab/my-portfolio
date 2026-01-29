@@ -14,7 +14,7 @@ export default function Portfolio({ projects }: { projects: any[] }) {
     if (selectedProject) setCurrentSlide(0);
   }, [selectedProject]);
 
-  // পরের স্লাইডে যাওয়ার ফাংশন
+  // পরের স্লাইডে যাওয়ার ফাংশন
   const nextSlide = (e: any) => {
     e.stopPropagation();
     if (!selectedProject?.gallery) return;
@@ -23,7 +23,7 @@ export default function Portfolio({ projects }: { projects: any[] }) {
     );
   };
 
-  // আগের স্লাইডে যাওয়ার ফাংশন
+  // আগের স্লাইডে যাওয়ার ফাংশন
   const prevSlide = (e: any) => {
     e.stopPropagation();
     if (!selectedProject?.gallery) return;
@@ -40,10 +40,11 @@ export default function Portfolio({ projects }: { projects: any[] }) {
 
       {/* গ্রিড গ্যালারি */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-        {projects.map((project) => (
+        {/* FIX: index যোগ করা হয়েছে এবং key-তে ব্যাকআপ রাখা হয়েছে */}
+        {projects?.map((project, index) => (
           <motion.div
-            layoutId={`card-${project._id}`}
-            key={project._id}
+            layoutId={`card-${project._id || index}`}
+            key={project._id || index} 
             onClick={() => setSelectedProject(project)}
             className="group cursor-pointer bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-colors"
           >
@@ -73,6 +74,7 @@ export default function Portfolio({ projects }: { projects: any[] }) {
         {selectedProject && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <motion.div
+              key="overlay" // অ্যানিমেশনের জন্য কী দেওয়া হলো
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -81,23 +83,23 @@ export default function Portfolio({ projects }: { projects: any[] }) {
             />
 
             <motion.div
+              key="modal-content" // অ্যানিমেশনের জন্য কী দেওয়া হলো
               layoutId={`card-${selectedProject._id}`}
               className="relative w-full max-w-4xl bg-[#111] border border-white/10 rounded-3xl overflow-hidden shadow-2xl z-10 max-h-[90vh] flex flex-col"
             >
-              {/* স্লাইডার এরিয়া */}
+              {/* স্লাইডার এরিয়া */}
               <div className="relative h-64 md:h-[500px] w-full bg-black">
                 {selectedProject.gallery && selectedProject.gallery.length > 0 ? (
-                  // যদি গ্যালারি ছবি থাকে তবে স্লাইডার দেখাও
                   <>
                     <Image
                       key={currentSlide}
                       src={urlFor(selectedProject.gallery[currentSlide]).url()}
                       alt="Gallery Image"
                       fill
-                      className="object-contain" // পুরো ছবি দেখাবে, কাটবে না
+                      className="object-contain"
                     />
                     
-                    {/* স্লাইডার বাটন (যদি ১টার বেশি ছবি থাকে) */}
+                    {/* স্লাইডার বাটন */}
                     {selectedProject.gallery.length > 1 && (
                       <>
                         <button
@@ -112,7 +114,7 @@ export default function Portfolio({ projects }: { projects: any[] }) {
                         >
                           →
                         </button>
-                        {/* পেজিনেশন ডট (নিচে ছোট গোল গোল) */}
+                        {/* পেজিনেশন ডট */}
                         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
                           {selectedProject.gallery.map((_: any, idx: number) => (
                             <div
@@ -127,7 +129,7 @@ export default function Portfolio({ projects }: { projects: any[] }) {
                     )}
                   </>
                 ) : (
-                  // গ্যালারি না থাকলে মেইন ছবি দেখাও
+                  // গ্যালারি না থাকলে মেইন ছবি
                   selectedProject.image && (
                     <Image
                       src={urlFor(selectedProject.image).url()}
@@ -147,7 +149,7 @@ export default function Portfolio({ projects }: { projects: any[] }) {
                 </button>
               </div>
 
-              {/* কন্টেন্ট এরিয়া */}
+              {/* কন্টেন্ট এরিয়া */}
               <div className="p-8 overflow-y-auto bg-[#111]">
                 <h2 className="text-3xl font-bold text-white mb-4">
                   {selectedProject.title}
