@@ -5,30 +5,30 @@ import Image from "next/image";
 import { urlFor } from "./sanity";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function Portfolio({ projects }: { projects: any[] }) {
-  const [selectedProject, setSelectedProject] = useState<any>(null);
+// এখানে props হিসেবে openProject এবং setOpenProject গ্রহণ করা হচ্ছে
+export default function Portfolio({ projects, openProject, setOpenProject }: any) {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   // মোডাল ওপেন হলে স্লাইড রিসেট হবে
   useEffect(() => {
-    if (selectedProject) setCurrentSlide(0);
-  }, [selectedProject]);
+    if (openProject) setCurrentSlide(0);
+  }, [openProject]);
 
   // পরের স্লাইডে যাওয়ার ফাংশন
   const nextSlide = (e: any) => {
     e.stopPropagation();
-    if (!selectedProject?.gallery) return;
+    if (!openProject?.gallery) return;
     setCurrentSlide((prev) => 
-      prev === selectedProject.gallery.length - 1 ? 0 : prev + 1
+      prev === openProject.gallery.length - 1 ? 0 : prev + 1
     );
   };
 
   // আগের স্লাইডে যাওয়ার ফাংশন
   const prevSlide = (e: any) => {
     e.stopPropagation();
-    if (!selectedProject?.gallery) return;
+    if (!openProject?.gallery) return;
     setCurrentSlide((prev) => 
-      prev === 0 ? selectedProject.gallery.length - 1 : prev - 1
+      prev === 0 ? openProject.gallery.length - 1 : prev - 1
     );
   };
 
@@ -40,11 +40,12 @@ export default function Portfolio({ projects }: { projects: any[] }) {
 
       {/* গ্রিড গ্যালারি */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-        {projects?.map((project, index) => (
+        {projects?.map((project: any, index: number) => (
           <motion.div
             layoutId={`card-${project._id || index}`}
             key={project._id || index} 
-            onClick={() => setSelectedProject(project)}
+            // ক্লিক করলে এখন Parent (ClientPage) কে জানাবে
+            onClick={() => setOpenProject(project)}
             className="group cursor-pointer bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-colors"
           >
             {/* 1:1 Ratio (Square) */}
@@ -69,36 +70,37 @@ export default function Portfolio({ projects }: { projects: any[] }) {
         ))}
       </div>
 
-      {/* পপ-আপ মোডাল (FIX: z-[100] added to overlap navbar) */}
+      {/* পপ-আপ মোডাল (openProject চেক করা হচ্ছে) */}
       <AnimatePresence>
-        {selectedProject && (
+        {openProject && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setSelectedProject(null)}
+              // বন্ধ করলে Parent কে জানাবে
+              onClick={() => setOpenProject(null)}
               className="absolute inset-0 bg-black/90 backdrop-blur-md cursor-pointer"
             />
 
             <motion.div
-              layoutId={`card-${selectedProject._id}`}
+              layoutId={`card-${openProject._id}`}
               className="relative w-full max-w-2xl bg-[#111] border border-white/10 rounded-3xl overflow-hidden shadow-2xl z-10 flex flex-col max-h-[90vh]"
             >
               {/* স্লাইডার এরিয়া (1:1 Ratio - Square) */}
               <div className="relative aspect-square w-full bg-black border-b border-white/10 shrink-0">
-                {selectedProject.gallery && selectedProject.gallery.length > 0 ? (
+                {openProject.gallery && openProject.gallery.length > 0 ? (
                   <>
                     <Image
                       key={currentSlide}
-                      src={urlFor(selectedProject.gallery[currentSlide]).url()}
+                      src={urlFor(openProject.gallery[currentSlide]).url()}
                       alt="Gallery Image"
                       fill
                       className="object-contain p-2"
                     />
                     
                     {/* স্লাইডার বাটন */}
-                    {selectedProject.gallery.length > 1 && (
+                    {openProject.gallery.length > 1 && (
                       <>
                         <button
                           onClick={prevSlide}
@@ -115,17 +117,17 @@ export default function Portfolio({ projects }: { projects: any[] }) {
                         
                         {/* কাউন্টার */}
                         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 px-3 py-1 rounded-full text-xs text-white border border-white/10">
-                          {currentSlide + 1} / {selectedProject.gallery.length}
+                          {currentSlide + 1} / {openProject.gallery.length}
                         </div>
                       </>
                     )}
                   </>
                 ) : (
                   // গ্যালারি না থাকলে মেইন ছবি
-                  selectedProject.image && (
+                  openProject.image && (
                     <Image
-                      src={urlFor(selectedProject.image).url()}
-                      alt={selectedProject.title}
+                      src={urlFor(openProject.image).url()}
+                      alt={openProject.title}
                       fill
                       className="object-cover"
                     />
@@ -134,7 +136,7 @@ export default function Portfolio({ projects }: { projects: any[] }) {
 
                 {/* ক্লোজ বাটন */}
                 <button
-                  onClick={() => setSelectedProject(null)}
+                  onClick={() => setOpenProject(null)}
                   className="absolute top-4 right-4 bg-red-500 hover:bg-red-600 text-white w-8 h-8 flex items-center justify-center rounded-full shadow-lg transition z-20"
                 >
                   ✕
@@ -144,14 +146,14 @@ export default function Portfolio({ projects }: { projects: any[] }) {
               {/* কন্টেন্ট এরিয়া (স্ক্রল হবে) */}
               <div className="p-6 md:p-8 bg-[#151515] overflow-y-auto">
                 <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
-                  {selectedProject.title}
+                  {openProject.title}
                 </h2>
                 <p className="text-gray-300 text-sm md:text-base leading-relaxed mb-6">
-                  {selectedProject.description}
+                  {openProject.description}
                 </p>
-                {selectedProject.link && (
+                {openProject.link && (
                   <a
-                    href={selectedProject.link}
+                    href={openProject.link}
                     target="_blank"
                     className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-bold rounded-full hover:bg-blue-700 transition"
                   >
