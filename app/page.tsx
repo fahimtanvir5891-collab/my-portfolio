@@ -5,7 +5,21 @@ export const revalidate = 5;
 
 export default async function Home() {
   const logos = await client.fetch(`*[_type == "clientLogo"]{logo}`);
-  const projects = await client.fetch(`*[_type == "project"] | order(_createdAt desc)`);
+  const projects = await client.fetch(`
+    *[_type == "project"] | order(_createdAt desc) {
+      _id,
+      title,
+      image,
+      link,
+      caseStudyGroups[] {
+        category,
+        items[] {
+          slideImage,
+          caption
+        }
+      }
+    }
+  `);
   const testimonials = await client.fetch(`*[_type == "testimonial"]{name, designation, feedback, photo}`);
   const certificates = await client.fetch(`*[_type == "certificate"]{title, image}`);
   
