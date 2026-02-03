@@ -13,17 +13,20 @@ export default function Portfolio({ projects, openProject, setOpenProject }: any
   // Desktop Zoom
   const [zoomStyle, setZoomStyle] = useState({ opacity: 0, x: 50, y: 50 });
 
+  // --- SAFE DATA FLATTENING (যাতে ডাটা না থাকলেও ক্র্যাশ না করে) ---
   const allSlides = openProject?.caseStudyGroups?.flatMap((group: any) => 
-    group.items.map((item: any) => ({
+    (group.items || []).map((item: any) => ({
       ...item,
       category: group.category 
     }))
   ) || [];
 
+  // --- ফিল্টার লজিক ---
   const filteredSlides = activeCategory === "All" 
     ? allSlides 
     : allSlides.filter((slide: any) => slide.category === activeCategory);
 
+  // মোডাল ওপেন হলে রিসেট
   useEffect(() => {
     if (openProject) {
       setCurrentSlide(0);
@@ -31,18 +34,22 @@ export default function Portfolio({ projects, openProject, setOpenProject }: any
     }
   }, [openProject]);
 
+  // ফিল্টার পাল্টালে স্লাইড ০ তে রিসেট
   useEffect(() => {
     setCurrentSlide(0);
   }, [activeCategory]);
 
   const nextSlide = () => {
+    if (filteredSlides.length === 0) return; // সেফটি চেক
     setCurrentSlide((prev) => (prev === filteredSlides.length - 1 ? 0 : prev + 1));
   };
 
   const prevSlide = () => {
+    if (filteredSlides.length === 0) return; // সেফটি চেক
     setCurrentSlide((prev) => (prev === 0 ? filteredSlides.length - 1 : prev - 1));
   };
 
+  // Zoom Logic
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
     const x = ((e.clientX - left) / width) * 100;
@@ -105,7 +112,7 @@ export default function Portfolio({ projects, openProject, setOpenProject }: any
               {/* --- বাম পাশ: ইমেজ সেকশন --- */}
               <div className="w-full md:w-[60%] h-[50%] md:h-full bg-black relative flex flex-col border-b md:border-b-0 md:border-r border-white/10">
                 
-                {/* Close Button (Mobile Only - Moved to Top Right Safely) */}
+                {/* Close Button (Mobile Only) */}
                 <button 
                   onClick={() => setOpenProject(null)} 
                   className="md:hidden absolute top-4 right-4 z-50 bg-red-600 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg"
@@ -114,11 +121,12 @@ export default function Portfolio({ projects, openProject, setOpenProject }: any
                 </button>
 
                 {/* Mobile Zoom Area */}
-                <div className="md:hidden w-full h-full flex items-center justify-center pt-8 pb-2"> {/* Added padding top for X button safety */}
+                <div className="md:hidden w-full h-full flex items-center justify-center pt-8 pb-2">
                    <TransformWrapper initialScale={1} minScale={1} maxScale={4}>
                      <TransformComponent wrapperClass="!w-full !h-full" contentClass="!w-full !h-full flex items-center justify-center">
                         <div className="relative w-full h-full min-h-[250px]">
-                            {filteredSlides.length > 0 ? (
+                            {/* CRASH FIX: এখানে চেক করা হচ্ছে ছবি আছে কিনা */}
+                            {filteredSlides.length > 0 && filteredSlides[currentSlide] ? (
                                <Image
                                 src={urlFor(filteredSlides[currentSlide].slideImage).url()}
                                 alt="Slide"
@@ -126,7 +134,7 @@ export default function Portfolio({ projects, openProject, setOpenProject }: any
                                 className="object-contain"
                                />
                             ) : (
-                                <div className="text-white flex items-center justify-center h-full">No images</div>
+                                <div className="text-white flex items-center justify-center h-full">Select a category</div>
                             )}
                         </div>
                      </TransformComponent>
@@ -140,7 +148,8 @@ export default function Portfolio({ projects, openProject, setOpenProject }: any
                     onMouseLeave={handleMouseLeave}
                 >
                     <div className="relative w-full h-full p-4">
-                        {filteredSlides.length > 0 && (
+                        {/* CRASH FIX: এখানেও সেফটি চেক লাগানো হয়েছে */}
+                        {filteredSlides.length > 0 && filteredSlides[currentSlide] && (
                             <Image
                                 src={urlFor(filteredSlides[currentSlide].slideImage).url()}
                                 alt="Slide"
@@ -155,7 +164,7 @@ export default function Portfolio({ projects, openProject, setOpenProject }: any
                     </div>
                 </div>
 
-                {/* --- কন্ট্রোল বার (মোবাইলে নিচে আলাদা বক্সে থাকবে) --- */}
+                {/* --- কন্ট্রোল বার --- */}
                 {filteredSlides.length > 1 && (
                   <div className="flex items-center justify-between px-4 py-3 bg-[#151515] border-t border-white/10 z-20">
                     <button 
@@ -186,7 +195,6 @@ export default function Portfolio({ projects, openProject, setOpenProject }: any
                 <button onClick={() => setOpenProject(null)} className="hidden md:flex absolute top-4 right-4 bg-white/10 hover:bg-red-500 text-white w-8 h-8 items-center justify-center rounded-full transition z-20">✕</button>
 
                 <div className="p-6 md:p-10 overflow-y-auto flex-1">
-                    {/* Title with Spacing */}
                     <h2 className="text-2xl md:text-3xl font-bold text-white mb-4 mt-2 md:mt-0">{openProject.title}</h2>
                     
                     {/* Category Buttons */}
@@ -213,11 +221,11 @@ export default function Portfolio({ projects, openProject, setOpenProject }: any
                         ))}
                     </div>
 
-                    {/* Description */}
+                    {/* Description - CRASH FIX: এখানেও সেফটি চেক */}
                     <div className="text-gray-300 text-sm md:text-base leading-relaxed whitespace-pre-line mb-8 min-h-[100px]">
-                        {filteredSlides.length > 0 
+                        {filteredSlides.length > 0 && filteredSlides[currentSlide]
                             ? (filteredSlides[currentSlide].caption || "No description available.")
-                            : "No items found in this category."}
+                            : "Select a category above to view slides."}
                     </div>
 
                     {openProject.link && (
