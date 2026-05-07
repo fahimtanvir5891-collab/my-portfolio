@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next"; // এই লাইনটি নতুন
+import { Analytics } from "@vercel/analytics/next"; 
+import Chatbot from "./components/Chatbot"; // চ্যাটবট ইমপোর্ট করা হলো
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -19,7 +20,8 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className} suppressHydrationWarning={true}>
         {children}
-        <Analytics /> {/* এই লাইনটি অ্যানালিটিক্স চালু করবে */}
+        <Analytics /> 
+        <Chatbot /> {/* ওয়েবসাইটের সব পেজে চ্যাটবট দেখানোর জন্য এটি অ্যাড করা হলো */}
       </body>
     </html>
   );
