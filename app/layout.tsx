@@ -8,7 +8,6 @@ import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
-// Poppins ফন্ট কনফিগার করা হলো
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
@@ -36,18 +35,33 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <head>
-        {customScripts?.map((script: any) => (
-          <script
-            key={script._id}
-            dangerouslySetInnerHTML={{ __html: script.headerCode }}
-          />
-        ))}
+        {customScripts?.map((script: any) => {
+          const code = script.headerCode || "";
+          
+          // যদি স্যানিটিতে দেওয়া কোডটি <meta> ট্যাগ হয়, তবে সেটি সরাসরি মেটা হিসেবে রেন্ডার হবে
+          if (code.trim().startsWith("<meta")) {
+            return (
+              <div
+                key={script._id}
+                dangerouslySetInnerHTML={{ __html: code }}
+              />
+            );
+          }
+          
+          // অন্য সব জাভাস্ক্রিপ্ট কোড (GTM/Pixel) আগের মতোই <script> ট্যাগে রেন্ডার হবে
+          return (
+            <script
+              key={script._id}
+              dangerouslySetInnerHTML={{ __html: code }}
+            />
+          );
+        })}
       </head>
       <body className={`${inter.className} ${poppins.variable}`} suppressHydrationWarning={true}>
         {children}
         <Analytics /> 
         <Chatbot />
-        <ScrollToTop /> {/* নতুন ডায়নামিক আইল্যান্ড বাটন */}
+        <ScrollToTop />
       </body>
     </html>
   );
