@@ -23,8 +23,13 @@ export default async function Home() {
   const testimonials = await client.fetch(`*[_type == "testimonial"]{name, designation, feedback, photo}`);
   const certificates = await client.fetch(`*[_type == "certificate"]{title, image}`);
   
-  // Logo anar query
-  const siteConfig = await client.fetch(`*[_type == "siteConfig"][0]{logo}`);
+  // ন্যাভবারের সব ডেটা একসাথে আনা হচ্ছে
+  const siteConfig = await client.fetch(`*[_type == "siteConfig"][0]{
+    logo, 
+    menuLinks, 
+    ctaText, 
+    ctaLink
+  }`);
 
   return (
     <ClientPage 
@@ -32,7 +37,7 @@ export default async function Home() {
       projects={projects} 
       testimonials={testimonials}
       certificates={certificates}
-      siteConfig={siteConfig} // Logo pathano holo
+      siteConfig={siteConfig} 
     />
   );
 }
