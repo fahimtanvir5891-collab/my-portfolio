@@ -1,23 +1,22 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { client } from '../../sanity'; // আপনার Sanity ক্লায়েন্ট
+import { client } from '../../sanity'; 
 
 export async function POST(req: Request) {
   try {
     const apiKey = process.env.GEMINI_API_KEY;
     
-    // ডিটেকটিভ ১: API Key পাচ্ছে কিনা চেক
     if (!apiKey) {
-      return NextResponse.json({ reply: "⚠️ Error: API Key পাওয়া যাচ্ছে না! আপনার .env.local ফাইলে GEMINI_API_KEY ঠিকমতো দেওয়া আছে কিনা চেক করুন।" });
+      return NextResponse.json({ reply: "⚠️ Error: API Key পাওয়া যাচ্ছে না!" });
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
     const body = await req.json();
-    const { message } = body;
+    // এখানে ইউজারের মেসেজ এবং FAQ এর ইনস্ট্রাকশন রিসিভ করা হচ্ছে
+    const { message, instruction } = body; 
 
     let systemPrompt = "You are a helpful assistant.";
     
-    // ডিটেকটিভ ২: Sanity থেকে ডেটা আনার চেষ্টা
     try {
       const query = `*[_type == "chatbotSettings"][0]`;
       const settings = await client.fetch(query, {}, { cache: 'no-store' });
@@ -25,10 +24,14 @@ export async function POST(req: Request) {
         systemPrompt = settings.systemPrompt;
       }
     } catch (sanityError: any) {
-      return NextResponse.json({ reply: `⚠️ Sanity Error: Sanity-র সাথে কানেক্ট হতে পারছে না। বিস্তারিত: ${sanityError.message}` });
+      return NextResponse.json({ reply: `⚠️ Sanity Error: ${sanityError.message}` });
     }
 
-    // ডিটেকটিভ ৩: Gemini-কে কল করা
+    // যদি ইউজার FAQ বাটনে ক্লিক করে, তবে সেই স্পেশাল ইনস্ট্রাকশন মেইন প্রম্পটের সাথে জুড়ে দেওয়া হবে
+    if (instruction) {
+      systemPrompt = `${systemPrompt}\n\n[SPECIAL INSTRUCTION FOR CURRENT QUESTION: ${instruction}]`;
+    }
+
     const model = genAI.getGenerativeModel({
         model: "gemini-2.5-flash",
         systemInstruction: systemPrompt
@@ -40,7 +43,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ reply: responseText });
 
   } catch (error: any) {
-    // ডিটেকটিভ ৪: জেমিনির অন্য কোনো এরর
     console.error("Chatbot Error:", error);
     return NextResponse.json({ reply: `⚠️ Gemini Error: ${error.message}` });
   }
