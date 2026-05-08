@@ -2,10 +2,8 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { animate, useInView, motion, AnimatePresence, useScroll, useSpring, useMotionValue } from "framer-motion";
-// Ensure sanity.js or sanity.ts is correctly imported
+import { animate, useInView, motion, AnimatePresence, useSpring, useMotionValue } from "framer-motion";
 import { urlFor } from "./sanity";
-// Ensure Portfolio component exists in the same directory
 import Portfolio from "./Portfolio";
 
 // --- Swiper Modules ---
@@ -78,7 +76,7 @@ function FooterSocialIcon({ href, imgName }: any) {
   );
 }
 
-// --- ফ্লোটিং মেনু (লোগো ফিক্স করা হয়েছে) ---
+// --- ফ্লোটিং মেনু (লোগো ফিক্স করা হয়েছে) ---
 function FloatingNavbar({ hide, logo }: { hide: boolean, logo: any }) {
   const [isOpen, setIsOpen] = useState(false);
   
@@ -93,7 +91,7 @@ function FloatingNavbar({ hide, logo }: { hide: boolean, logo: any }) {
         {/* LOGO SECTION - NO SHAPE, NO CROP */}
         <div className="flex items-center gap-2 cursor-pointer" onClick={scrollToTop}>
            {logo?.logo ? (
-             // এখানে গোল শেপ বাদ দেওয়া হয়েছে এবং অরিজিনাল সাইজ রাখা হয়েছে
+             // এখানে গোল শেপ বাদ দেওয়া হয়েছে এবং অরিজিনাল সাইজ রাখা হয়েছে
              <div className="relative h-10 w-auto flex items-center">
                <img 
                  src={urlFor(logo.logo).url()} 
@@ -169,49 +167,6 @@ function CursorFollower() {
   );
 }
 
-// --- স্ক্রল বাটন ---
-function ScrollToTop() {
-  const { scrollYProgress } = useScroll();
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const unsubscribe = scrollYProgress.on("change", (latest) => {
-      if (latest > 0.1) setVisible(true);
-      else setVisible(false);
-    });
-    return () => unsubscribe();
-  }, [scrollYProgress]);
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  return (
-    <motion.div
-      className="fixed bottom-10 right-10 z-50 cursor-pointer"
-      initial={{ opacity: 0, scale: 0 }}
-      animate={{ opacity: visible ? 1 : 0, scale: visible ? 1 : 0 }}
-      onClick={scrollToTop}
-    >
-      <svg width="60" height="60" viewBox="0 0 100 100" className="transform -rotate-90">
-        <circle cx="50" cy="50" r="40" stroke="#333" strokeWidth="4" fill="black" />
-        <motion.circle
-          cx="50"
-          cy="50"
-          r="40"
-          stroke="#ec4899"
-          strokeWidth="4"
-          fill="transparent"
-          style={{ pathLength: scrollYProgress }}
-        />
-      </svg>
-      <div className="absolute inset-0 flex items-center justify-center text-white font-bold text-xl">
-        ↑
-      </div>
-    </motion.div>
-  );
-}
-
 // --- মেইন পেজ ---
 export default function ClientPage({ logos, projects, testimonials, certificates, siteConfig }: any) {
   const [openProject, setOpenProject] = useState<any>(null);
@@ -220,7 +175,6 @@ export default function ClientPage({ logos, projects, testimonials, certificates
     <main className="relative min-h-screen bg-[#050505] text-white overflow-hidden selection:bg-pink-500 selection:text-white">
       
       <CursorFollower />
-      <ScrollToTop />
 
       <div className="fixed inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none z-0"></div>
       <div className="fixed top-[-10%] left-[-10%] w-[500px] h-[500px] bg-purple-600/30 blur-[120px] rounded-full pointer-events-none"></div>
