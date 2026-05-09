@@ -4,7 +4,7 @@ import ClientPage from "./ClientPage";
 export const revalidate = 5;
 
 export default async function Home() {
-  const logos = await client.fetch(`*[_type == "clientLogo"]{logo}`);
+  const logos = await client.fetch(`*[_type == "clientLogo"]{logo}`) || [];
   const projects = await client.fetch(`
     *[_type == "project"] | order(_createdAt desc) {
       _id,
@@ -19,17 +19,17 @@ export default async function Home() {
         }
       }
     }
-  `);
-  const testimonials = await client.fetch(`*[_type == "testimonial"]{name, designation, feedback, photo}`);
-  const certificates = await client.fetch(`*[_type == "certificate"]{title, image}`);
+  `) || [];
+  const testimonials = await client.fetch(`*[_type == "testimonial"]{name, designation, feedback, photo}`) || [];
+  const certificates = await client.fetch(`*[_type == "certificate"]{title, image}`) || [];
   
-  // ন্যাভবারের সব ডেটা একসাথে আনা হচ্ছে
+  // ডেটা না থাকলে যাতে ক্রাশ না করে সেজন্য ডিফল্ট ভ্যালু সেট করা হলো
   const siteConfig = await client.fetch(`*[_type == "siteConfig"][0]{
     logo, 
     menuLinks, 
     ctaText, 
     ctaLink
-  }`);
+  }`) || {};
 
   return (
     <ClientPage 

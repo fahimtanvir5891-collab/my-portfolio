@@ -40,7 +40,7 @@ function AnimatedCounter({ to, text }: { to: number; text: string }) {
   );
 }
 
-// --- কাস্টম ইমেজ বাটন ---
+// --- কাস্টম সোশ্যাল বাটন ---
 function CustomSocialButton({ href, imgName }: any) {
   return (
     <a 
@@ -53,7 +53,7 @@ function CustomSocialButton({ href, imgName }: any) {
   );
 }
 
-// --- ফুটার আইকন ---
+// --- ফুটার সোশ্যাল আইকন ---
 function FooterSocialIcon({ href, imgName }: any) {
   return (
     <a href={href} target="_blank" className="relative w-8 h-8 hover:scale-110 transition-transform duration-300 block">
@@ -62,7 +62,7 @@ function FooterSocialIcon({ href, imgName }: any) {
   );
 }
 
-// --- ফ্লোটিং মেনু (স্যানিটি থেকে ডায়নামিক) ---
+// --- ফ্লোটিং ন্যাভবার (Null-safe) ---
 function FloatingNavbar({ hide, config }: { hide: boolean, config: any }) {
   const [isOpen, setIsOpen] = useState(false);
   
@@ -74,9 +74,9 @@ function FloatingNavbar({ hide, config }: { hide: boolean, config: any }) {
     <motion.div initial={{ y: -100, opacity: 0 }} animate={{ y: hide ? -150 : 0, opacity: hide ? 0 : 1 }} transition={{ duration: 0.8 }} className="fixed top-6 left-0 right-0 z-50 flex flex-col items-center px-4 pointer-events-none">
       <div className="bg-black/80 backdrop-blur-md border border-white/10 rounded-full px-6 py-3 md:px-8 md:py-4 flex items-center justify-between w-full max-w-5xl shadow-[0_0_20px_rgba(0,0,0,0.5)] pointer-events-auto relative z-50">
         
-        {/* LOGO SECTION */}
+        {/* LOGO - লোগো না থাকলে TK টেক্সট দেখাবে */}
         <div className="flex items-center gap-2 cursor-pointer" onClick={scrollToTop}>
-           {config?.logo ? (
+           {config?.logo?.asset ? (
              <div className="relative h-10 w-auto flex items-center">
                <img 
                  src={urlFor(config.logo).url()} 
@@ -89,26 +89,20 @@ function FloatingNavbar({ hide, config }: { hide: boolean, config: any }) {
            )}
         </div>
 
-        {/* Dynamic Menu Links */}
+        {/* Menu Links - ডেটা না থাকলে খালি দেখাবে */}
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
           {config?.menuLinks?.map((link: any, idx: number) => (
-            <a key={idx} href={link.href} className="hover:text-white transition">{link.name}</a>
-          )) || (
-            <>
-              <a href="#about" className="hover:text-white transition">About</a>
-              <a href="#work" className="hover:text-white transition">Work</a>
-              <a href="#contact" className="hover:text-white transition">Contact</a>
-            </>
-          )}
+            <a key={idx} href={link?.href || "#"} className="hover:text-white transition">{link?.name}</a>
+          ))}
         </div>
         
-        {/* Dynamic CTA Button */}
+        {/* CTA Button */}
         <div className="flex items-center gap-4">
-            <a href={config?.ctaLink || "#"} target="_blank" className="bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-90 text-white text-xs md:text-sm font-bold px-4 py-2 md:px-6 md:py-2.5 rounded-full transition shadow-lg flex items-center gap-2">
+            <a href={config?.ctaLink || "https://wa.me/8801400905891"} target="_blank" className="bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-90 text-white text-xs md:text-sm font-bold px-4 py-2 md:px-6 md:py-2.5 rounded-full transition shadow-lg flex items-center gap-2">
                 <span className="relative w-5 h-5 block">
-                  <Image src="/wa.png" alt="Icon" fill className="object-contain" />
+                  <Image src="/wa.png" alt="WA" fill className="object-contain" />
                 </span>
-                {config?.ctaText || "Chat with me"}
+                {config?.ctaText || "Chat on WhatsApp"}
             </a>
             <button onClick={() => setIsOpen(!isOpen)} className="md:hidden text-white p-2 rounded-full hover:bg-white/10 transition">
                 {isOpen ? <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg> : <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>}
@@ -116,12 +110,12 @@ function FloatingNavbar({ hide, config }: { hide: boolean, config: any }) {
         </div>
       </div>
       
-      {/* Mobile Menu (Dynamic) */}
+      {/* Mobile Menu */}
       <AnimatePresence>
         {isOpen && (
             <motion.div initial={{ opacity: 0, y: -20, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -20, scale: 0.95 }} transition={{ duration: 0.2 }} className="absolute top-full mt-2 w-[90%] max-w-sm bg-[#111] border border-white/10 rounded-2xl shadow-2xl p-4 flex flex-col gap-2 pointer-events-auto md:hidden">
                 {config?.menuLinks?.map((link: any, idx: number) => (
-                  <a key={idx} href={link.href} onClick={() => setIsOpen(false)} className="text-gray-300 hover:text-white hover:bg-white/10 px-4 py-3 rounded-xl transition text-center font-medium">{link.name}</a>
+                  <a key={idx} href={link?.href || "#"} onClick={() => setIsOpen(false)} className="text-gray-300 hover:text-white hover:bg-white/10 px-4 py-3 rounded-xl transition text-center font-medium">{link?.name}</a>
                 ))}
             </motion.div>
         )}
@@ -149,7 +143,7 @@ function CursorFollower() {
   return <motion.div className="fixed top-0 left-0 w-8 h-8 rounded-full border-2 border-pink-500 z-[9999] pointer-events-none hidden md:block mix-blend-difference" style={{ x: springX, y: springY }} />;
 }
 
-// --- মেইন পেজ ---
+// --- মেইন এক্সপোর্ট ---
 export default function ClientPage({ logos, projects, testimonials, certificates, siteConfig }: any) {
   const [openProject, setOpenProject] = useState<any>(null);
 
@@ -158,7 +152,6 @@ export default function ClientPage({ logos, projects, testimonials, certificates
       <CursorFollower />
       <div className="fixed inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none z-0"></div>
       
-      {/* Navbar passing siteConfig */}
       <FloatingNavbar hide={!!openProject} config={siteConfig} />
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-10 pt-32">
@@ -167,7 +160,6 @@ export default function ClientPage({ logos, projects, testimonials, certificates
             <p className="text-gray-400 max-w-2xl mx-auto text-lg">Expert Digital Marketing strategies to grow your business.</p>
         </section>
 
-        {/* About Section */}
         <section id="about" className="py-10 scroll-mt-28">
             <div className="relative bg-gradient-to-r from-[#2a0845] to-[#6441A5] rounded-3xl p-6 md:p-10 shadow-2xl border border-white/10 overflow-hidden">
                 <div className="absolute inset-0 bg-black/10 backdrop-blur-sm z-0"></div>
@@ -194,17 +186,15 @@ export default function ClientPage({ logos, projects, testimonials, certificates
             </div>
         </section>
 
-        {/* Logo Slider */}
         <section className="mb-20 scroll-mt-28" id="logos">
           <p className="text-center text-gray-500 uppercase tracking-widest text-xs font-bold mb-6">Trusted By 230+ Clients</p>
           <Swiper spaceBetween={50} slidesPerView="auto" loop={true} speed={3000} freeMode={true} autoplay={{ delay: 1, disableOnInteraction: false }} modules={[Autoplay, FreeMode]} className="w-full mask-linear-fade">
-            {[...logos, ...logos, ...logos].map((logo: any, idx: number) => (
-              logo.logo && (<SwiperSlide key={idx} style={{ width: 'auto' }}><div className="relative w-28 h-12 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition mx-8"><Image src={urlFor(logo.logo).url()} alt="Client" fill className="object-contain" /></div></SwiperSlide>)
+            {logos?.map((logo: any, idx: number) => (
+              logo?.logo && (<SwiperSlide key={idx} style={{ width: 'auto' }}><div className="relative w-28 h-12 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition mx-8"><Image src={urlFor(logo.logo).url()} alt="Client" fill className="object-contain" /></div></SwiperSlide>)
             ))}
           </Swiper>
         </section>
 
-        {/* Certificates */}
         {certificates?.length > 0 && (
           <section className="mb-20 scroll-mt-28" id="process">
               <h2 className="text-3xl md:text-5xl font-bold text-center mb-10">My <span className="text-pink-500">Certifications</span></h2>
@@ -212,7 +202,7 @@ export default function ClientPage({ logos, projects, testimonials, certificates
                   {certificates.map((cert: any, idx: number) => (
                       <SwiperSlide key={idx} style={{ width: '320px', height: 'auto' }}>
                           <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.5)] bg-[#111]">
-                              <Image src={urlFor(cert.image).url()} alt={cert.title} fill className="object-cover" />
+                              {cert?.image && <Image src={urlFor(cert.image).url()} alt={cert.title} fill className="object-cover" />}
                               <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black via-black/80 to-transparent p-4 pt-10 text-center"><p className="text-sm font-medium text-white">{cert.title}</p></div>
                           </div>
                       </SwiperSlide>
@@ -221,19 +211,18 @@ export default function ClientPage({ logos, projects, testimonials, certificates
           </section>
         )}
         
-        {/* Portfolio & Reviews */}
         <section className="scroll-mt-28" id="work"><Portfolio projects={projects} openProject={openProject} setOpenProject={setOpenProject} /></section>
 
         <section className="py-20 scroll-mt-28" id="reviews">
           <h2 className="text-3xl md:text-5xl font-bold text-center mb-16">Client <span className="text-pink-500">Feedback</span></h2>
           <Swiper spaceBetween={30} slidesPerView="auto" centeredSlides={true} loop={true} speed={4000} freeMode={true} autoplay={{ delay: 1 }} modules={[Autoplay, FreeMode]} className="w-full">
-             {[...testimonials, ...testimonials].map((review: any, idx: number) => (
+             {testimonials?.map((review: any, idx: number) => (
                <SwiperSlide key={idx} style={{ width: 'auto' }}>
                  <div className="w-[350px] md:w-[450px] bg-white/5 border border-white/10 p-8 rounded-2xl relative hover:bg-white/10 transition cursor-grab">
                     <div className="text-4xl text-blue-500 mb-4">❝</div>
                     <p className="text-gray-300 mb-6 text-sm leading-relaxed">{review.feedback}</p>
                     <div className="flex items-center gap-4 mt-auto">
-                        <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-700 border border-white/20">{review.photo && <Image src={urlFor(review.photo).url()} alt={review.name} fill className="object-cover" />}</div>
+                        <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-700 border border-white/20">{review?.photo && <Image src={urlFor(review.photo).url()} alt={review.name} fill className="object-cover" />}</div>
                         <div><h4 className="font-bold text-white text-sm">{review.name}</h4><p className="text-xs text-gray-500">{review.designation}</p></div>
                     </div>
                 </div>
@@ -247,10 +236,10 @@ export default function ClientPage({ logos, projects, testimonials, certificates
         <div className="max-w-6xl mx-auto px-6 md:px-10">
             <div className="flex flex-col md:flex-row justify-between items-center gap-8 mb-20 bg-gradient-to-r from-blue-900/20 to-purple-900/20 p-10 rounded-3xl border border-white/5">
                 <div className="text-center md:text-left"><h2 className="text-3xl md:text-5xl font-bold mb-2 text-white">Ready to Scale?</h2><p className="text-gray-400 text-lg">Let's build your growth strategy today.</p></div>
-                <a href={config?.ctaLink || "#"} target="_blank" className="group relative px-8 py-4 bg-white text-black font-bold text-lg rounded-full overflow-hidden shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(37,211,102,0.6)] transition-all">
+                <a href={siteConfig?.ctaLink || "https://wa.me/8801400905891"} target="_blank" className="group relative px-8 py-4 bg-white text-black font-bold text-lg rounded-full overflow-hidden shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(37,211,102,0.6)] transition-all">
                     <span className="relative z-10 flex items-center gap-2 group-hover:text-white transition duration-300">
                         <span className="relative w-5 h-5 block"><Image src="/wa.png" alt="WA" fill className="object-contain" /></span>
-                        {config?.ctaText || "Chat on WhatsApp"}
+                        {siteConfig?.ctaText || "Chat on WhatsApp"}
                     </span>
                     <div className="absolute inset-0 bg-[#25D366] transform scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-300 ease-out"></div>
                 </a>
