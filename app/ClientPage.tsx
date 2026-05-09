@@ -2,228 +2,125 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { animate, useInView, motion, AnimatePresence, useSpring, useMotionValue } from "framer-motion";
+import { animate, useInView, motion, useSpring, useMotionValue } from "framer-motion";
 import { urlFor } from "./sanity";
 import Portfolio from "./Portfolio";
+import Services from "./components/Services"; // সার্ভিস ইমপোর্ট করা হলো
+import { PortableText } from '@portabletext/react';
 
-// --- Swiper Modules ---
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, FreeMode, EffectCoverflow, Pagination } from 'swiper/modules';
+import { Autoplay, FreeMode } from 'swiper/modules';
 import 'swiper/css';
-import 'swiper/css/effect-coverflow';
-import 'swiper/css/pagination';
 
-// --- অ্যানিমেটেড কাউন্টার ---
 function AnimatedCounter({ to, text }: { to: number; text: string }) {
   const nodeRef = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(nodeRef, { once: true });
+  const isInView = useInView(nodeRef, { once: true, margin: "-50px" });
 
   useEffect(() => {
     if (!isInView) return;
     const node = nodeRef.current;
-    const controls = animate(0, to, {
-      duration: 2,
-      onUpdate(value) {
-        if (node) node.textContent = value.toFixed(0);
-      },
-    });
+    const controls = animate(0, to || 0, { duration: 2.5, ease: "easeOut", onUpdate(value) { if (node) node.textContent = value.toFixed(0); } });
     return () => controls.stop();
   }, [to, isInView]);
 
   return (
     <div className="text-center">
-      <div className="text-3xl md:text-4xl font-bold text-white flex justify-center items-center">
-        <span ref={nodeRef}>0</span><span>+</span>
-      </div>
-      <p className="text-sm md:text-base text-gray-300">{text}</p>
+      <div className="text-5xl md:text-6xl font-black text-black flex justify-center items-center"><span ref={nodeRef}>0</span><span className="text-orange-500 ml-1">+</span></div>
+      <p className="text-sm md:text-base font-bold text-gray-500 mt-2 uppercase tracking-widest">{text}</p>
     </div>
   );
 }
 
-// --- কাস্টম সোশ্যাল বাটন ---
-function CustomSocialButton({ href, imgName }: any) {
-  return (
-    <a 
-      href={href} 
-      target="_blank" 
-      className="relative w-12 h-12 md:w-14 md:h-14 hover:scale-110 transition-transform duration-300 shadow-lg rounded-lg overflow-hidden block"
-    >
-      <Image src={`/${imgName}`} alt="social icon" fill className="object-cover" />
-    </a>
-  );
-}
+const ptComponents = {
+  block: {
+    normal: ({children}: any) => <p className="text-gray-700 text-lg md:text-xl leading-relaxed font-medium">{children}</p>,
+    h1: ({children}: any) => <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter text-black mb-6 leading-tight">{children}</h1>,
+    h2: ({children}: any) => <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4">{children}</h2>,
+  },
+  marks: {
+    link: ({children, value}: any) => <a href={value.href} target="_blank" rel="noopener noreferrer" className="text-orange-500 font-black underline decoration-orange-500/40 hover:decoration-orange-500 hover:text-orange-600 transition-all cursor-pointer">{children}</a>,
+    strong: ({children}: any) => <strong className="font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-700">{children}</strong>
+  },
+};
 
-// --- ফুটার সোশ্যাল আইকন ---
-function FooterSocialIcon({ href, imgName }: any) {
-  return (
-    <a href={href} target="_blank" className="relative w-8 h-8 hover:scale-110 transition-transform duration-300 block">
-      <Image src={`/${imgName}`} alt="social icon" fill className="object-contain" />
-    </a>
-  );
-}
-
-// --- ফ্লোটিং ন্যাভবার (Null-safe) ---
-function FloatingNavbar({ hide, config }: { hide: boolean, config: any }) {
-  const [isOpen, setIsOpen] = useState(false);
-  
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  return (
-    <motion.div initial={{ y: -100, opacity: 0 }} animate={{ y: hide ? -150 : 0, opacity: hide ? 0 : 1 }} transition={{ duration: 0.8 }} className="fixed top-6 left-0 right-0 z-50 flex flex-col items-center px-4 pointer-events-none">
-      <div className="bg-black/80 backdrop-blur-md border border-white/10 rounded-full px-6 py-3 md:px-8 md:py-4 flex items-center justify-between w-full max-w-5xl shadow-[0_0_20px_rgba(0,0,0,0.5)] pointer-events-auto relative z-50">
-        
-        {/* LOGO - লোগো না থাকলে TK টেক্সট দেখাবে */}
-        <div className="flex items-center gap-2 cursor-pointer" onClick={scrollToTop}>
-           {config?.logo?.asset ? (
-             <div className="relative h-10 w-auto flex items-center">
-               <img 
-                 src={urlFor(config.logo).url()} 
-                 alt="Logo" 
-                 className="h-10 w-auto object-contain"
-               />
-             </div>
-           ) : (
-             <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-black font-bold text-sm">TK</div>
-           )}
-        </div>
-
-        {/* Menu Links - ডেটা না থাকলে খালি দেখাবে */}
-        <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
-          {config?.menuLinks?.map((link: any, idx: number) => (
-            <a key={idx} href={link?.href || "#"} className="hover:text-white transition">{link?.name}</a>
-          ))}
-        </div>
-        
-        {/* CTA Button */}
-        <div className="flex items-center gap-4">
-            <a href={config?.ctaLink || "https://wa.me/8801400905891"} target="_blank" className="bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-90 text-white text-xs md:text-sm font-bold px-4 py-2 md:px-6 md:py-2.5 rounded-full transition shadow-lg flex items-center gap-2">
-                <span className="relative w-5 h-5 block">
-                  <Image src="/wa.png" alt="WA" fill className="object-contain" />
-                </span>
-                {config?.ctaText || "Chat on WhatsApp"}
-            </a>
-            <button onClick={() => setIsOpen(!isOpen)} className="md:hidden text-white p-2 rounded-full hover:bg-white/10 transition">
-                {isOpen ? <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg> : <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>}
-            </button>
-        </div>
-      </div>
-      
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isOpen && (
-            <motion.div initial={{ opacity: 0, y: -20, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -20, scale: 0.95 }} transition={{ duration: 0.2 }} className="absolute top-full mt-2 w-[90%] max-w-sm bg-[#111] border border-white/10 rounded-2xl shadow-2xl p-4 flex flex-col gap-2 pointer-events-auto md:hidden">
-                {config?.menuLinks?.map((link: any, idx: number) => (
-                  <a key={idx} href={link?.href || "#"} onClick={() => setIsOpen(false)} className="text-gray-300 hover:text-white hover:bg-white/10 px-4 py-3 rounded-xl transition text-center font-medium">{link?.name}</a>
-                ))}
-            </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
-  );
-}
-
-// --- ম্যাজিক কার্সার ---
-function CursorFollower() {
+export default function ClientPage({ logos, projects, services, testimonials, homeData, siteConfig }: any) {
+  const [openProject, setOpenProject] = useState<any>(null);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const springX = useSpring(mouseX, { stiffness: 500, damping: 28 });
   const springY = useSpring(mouseY, { stiffness: 500, damping: 28 });
 
   useEffect(() => {
-    const moveCursor = (e: MouseEvent) => {
-      mouseX.set(e.clientX - 16);
-      mouseY.set(e.clientY - 16);
-    };
+    const moveCursor = (e: MouseEvent) => { mouseX.set(e.clientX - 16); mouseY.set(e.clientY - 16); };
     window.addEventListener("mousemove", moveCursor);
     return () => window.removeEventListener("mousemove", moveCursor);
   }, [mouseX, mouseY]);
 
-  return <motion.div className="fixed top-0 left-0 w-8 h-8 rounded-full border-2 border-pink-500 z-[9999] pointer-events-none hidden md:block mix-blend-difference" style={{ x: springX, y: springY }} />;
-}
-
-// --- মেইন এক্সপোর্ট ---
-export default function ClientPage({ logos, projects, testimonials, certificates, siteConfig }: any) {
-  const [openProject, setOpenProject] = useState<any>(null);
-
   return (
-    <main className="relative min-h-screen bg-[#050505] text-white overflow-hidden selection:bg-pink-500 selection:text-white">
-      <CursorFollower />
-      <div className="fixed inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none z-0"></div>
-      
-      <FloatingNavbar hide={!!openProject} config={siteConfig} />
+    <main className="relative min-h-screen overflow-hidden selection:bg-orange-500 selection:text-white bg-[#F9F9F6]">
+      <motion.div className="fixed top-0 left-0 w-8 h-8 rounded-full border-4 border-orange-500 z-[9999] pointer-events-none hidden md:block" style={{ x: springX, y: springY }} />
+      <div className="fixed top-[-10%] left-[-10%] w-[500px] h-[500px] bg-orange-300/20 blur-[120px] rounded-full pointer-events-none"></div>
+      <div className="fixed bottom-0 right-0 w-[500px] h-[500px] bg-yellow-400/10 blur-[120px] rounded-full pointer-events-none"></div>
 
-      <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-10 pt-32">
-        <section className="text-center space-y-6 pt-10 pb-20">
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight">Scaling Brands with <br /><span className="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 text-transparent bg-clip-text">Data-Driven Ads</span></h1>
-            <p className="text-gray-400 max-w-2xl mx-auto text-lg">Expert Digital Marketing strategies to grow your business.</p>
-        </section>
+      <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-10 pt-40">
+        
+        <motion.section initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: "easeOut" }} className="text-center space-y-6 pb-20">
+            {homeData?.heroHeading ? <PortableText value={homeData.heroHeading} components={ptComponents} /> : <h1 className="text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter mb-6 text-black">Scaling Brands with <br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-600">Data-Driven Ads</span></h1>}
+            {homeData?.heroSubheading ? <PortableText value={homeData.heroSubheading} components={ptComponents} /> : <p className="text-xl md:text-2xl font-bold text-gray-600">Expert Digital Marketing strategies to grow your business.</p>}
+        </motion.section>
 
-        <section id="about" className="py-10 scroll-mt-28">
-            <div className="relative bg-gradient-to-r from-[#2a0845] to-[#6441A5] rounded-3xl p-6 md:p-10 shadow-2xl border border-white/10 overflow-hidden">
-                <div className="absolute inset-0 bg-black/10 backdrop-blur-sm z-0"></div>
-                <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <motion.section initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.8, ease: "easeOut" }} className="py-10">
+            <div className="relative bg-white rounded-3xl p-8 md:p-14 shadow-[0_30px_60px_rgba(0,0,0,0.05)] border border-gray-100 overflow-hidden">
+                <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                     <div className="lg:col-span-4 flex justify-center lg:justify-start">
-                        <div className="relative w-64 h-64 md:w-72 md:h-72 rounded-full border-4 border-white/20 overflow-hidden shadow-[0_0_50px_rgba(168,85,247,0.5)]"><Image src="/profile.png" alt="Tanvir" fill className="object-cover" /></div>
+                        <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-3xl border-4 border-white overflow-hidden shadow-2xl shadow-orange-500/20 bg-gray-50">
+                          {homeData?.profileImage && <Image src={urlFor(homeData.profileImage).url()} alt="Profile" fill className="object-cover" />}
+                        </div>
                     </div>
-                    <div className="lg:col-span-6 text-center lg:text-left space-y-6">
-                        <div><h2 className="text-4xl md:text-6xl font-bold text-white mb-2">Tanvir Kabir</h2><p className="text-xl text-purple-200 font-medium">Digital Marketer & Founder of TanEvate</p></div>
-                        <p className="text-gray-300 leading-relaxed max-w-2xl text-sm md:text-base">I specialize in Meta Ads, Server-Side Tracking, and building sales funnels.</p>
-                        <div className="flex flex-wrap justify-center lg:justify-start gap-8 md:gap-16 pt-4 border-t border-white/10 mt-6"><AnimatedCounter to={231} text="Clients" /><AnimatedCounter to={206} text="Good Reviews" /><AnimatedCounter to={2} text="Years Exp." /></div>
-                    </div>
-                    <div className="lg:col-span-2 flex justify-center lg:justify-end">
-                        <div className="grid grid-cols-3 gap-4">
-                            <CustomSocialButton href="https://facebook.com/fahiminframe" imgName="fb.png" />
-                            <CustomSocialButton href="https://instagram.com/fahim_inframe" imgName="insta.png" />
-                            <CustomSocialButton href="https://linkedin.com/in/tanvir-kabir-fahim" imgName="li.png" />
-                            <CustomSocialButton href="https://wa.me/8801400905891" imgName="wa.png" />
-                            <CustomSocialButton href="https://upwork.com/freelancers/~01836058560f27a755" imgName="up.png" />
-                            <CustomSocialButton href="#" imgName="fi.png" />
+                    <div className="lg:col-span-8 text-center lg:text-left space-y-8">
+                        <div><h2 className="text-4xl md:text-6xl font-black text-black mb-2">{homeData?.profileName || "Tanvir Kabir"}</h2><p className="text-xl font-black text-orange-500 uppercase tracking-widest">{homeData?.profileTitle || "Digital Marketer"}</p></div>
+                        <div className="max-w-2xl">{homeData?.profileBio ? <PortableText value={homeData.profileBio} components={ptComponents} /> : <p className="text-gray-700 text-lg font-medium">I specialize in Meta Ads, Server-Side Tracking, and building sales funnels.</p>}</div>
+                        <div className="flex flex-wrap justify-center lg:justify-start gap-10 md:gap-20 pt-10 border-t border-gray-100">
+                          <AnimatedCounter to={homeData?.clientsCount || 231} text="Clients" />
+                          <AnimatedCounter to={homeData?.reviewsCount || 206} text="Good Reviews" />
+                          <AnimatedCounter to={homeData?.yearsExp || 2} text="Years Exp." />
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
+        </motion.section>
 
-        <section className="mb-20 scroll-mt-28" id="logos">
-          <p className="text-center text-gray-500 uppercase tracking-widest text-xs font-bold mb-6">Trusted By 230+ Clients</p>
+        <section className="mb-10 pt-4" id="logos">
+          <p className="text-center text-gray-500 uppercase tracking-widest text-sm font-black mb-8">Trusted By Great Clients</p>
           <Swiper spaceBetween={50} slidesPerView="auto" loop={true} speed={3000} freeMode={true} autoplay={{ delay: 1, disableOnInteraction: false }} modules={[Autoplay, FreeMode]} className="w-full mask-linear-fade">
-            {logos?.map((logo: any, idx: number) => (
-              logo?.logo && (<SwiperSlide key={idx} style={{ width: 'auto' }}><div className="relative w-28 h-12 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition mx-8"><Image src={urlFor(logo.logo).url()} alt="Client" fill className="object-contain" /></div></SwiperSlide>)
+            {[...(logos || []), ...(logos || []), ...(logos || [])].map((logo: any, idx: number) => (
+              logo?.logo && (<SwiperSlide key={idx} style={{ width: 'auto' }}><div className="relative w-32 h-16 grayscale hover:grayscale-0 hover:scale-110 transition-all duration-300 mx-8"><Image src={urlFor(logo.logo).url()} alt="Client" fill className="object-contain" /></div></SwiperSlide>)
             ))}
           </Swiper>
         </section>
 
-        {certificates?.length > 0 && (
-          <section className="mb-20 scroll-mt-28" id="process">
-              <h2 className="text-3xl md:text-5xl font-bold text-center mb-10">My <span className="text-pink-500">Certifications</span></h2>
-              <Swiper effect={'coverflow'} grabCursor={true} centeredSlides={true} slidesPerView={'auto'} coverflowEffect={{ rotate: 0, stretch: 0, depth: 150, modifier: 1, slideShadows: false, scale: 0.85 }} autoplay={{ delay: 2500 }} loop={true} modules={[EffectCoverflow, Autoplay, Pagination]} className="w-full max-w-5xl py-10">
-                  {certificates.map((cert: any, idx: number) => (
-                      <SwiperSlide key={idx} style={{ width: '320px', height: 'auto' }}>
-                          <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.5)] bg-[#111]">
-                              {cert?.image && <Image src={urlFor(cert.image).url()} alt={cert.title} fill className="object-cover" />}
-                              <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black via-black/80 to-transparent p-4 pt-10 text-center"><p className="text-sm font-medium text-white">{cert.title}</p></div>
-                          </div>
-                      </SwiperSlide>
-                  ))}
-              </Swiper>
-          </section>
-        )}
-        
-        <section className="scroll-mt-28" id="work"><Portfolio projects={projects} openProject={openProject} setOpenProject={setOpenProject} /></section>
+        {/* Portfolio Section */}
+        <section id="work" className="mb-32">
+            <Portfolio projects={projects} openProject={openProject} setOpenProject={setOpenProject} isHomePage={true} />
+        </section>
 
-        <section className="py-20 scroll-mt-28" id="reviews">
-          <h2 className="text-3xl md:text-5xl font-bold text-center mb-16">Client <span className="text-pink-500">Feedback</span></h2>
-          <Swiper spaceBetween={30} slidesPerView="auto" centeredSlides={true} loop={true} speed={4000} freeMode={true} autoplay={{ delay: 1 }} modules={[Autoplay, FreeMode]} className="w-full">
-             {testimonials?.map((review: any, idx: number) => (
+        {/* Services Section (New!) */}
+        <section id="service" className="mb-20">
+            <Services services={services} isHomePage={true} />
+        </section>
+
+        {/* Reviews Section */}
+        <section className="py-20" id="reviews">
+          <h2 className="text-5xl md:text-6xl font-black text-center mb-16 text-black">Client <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-600">Feedback</span></h2>
+          <Swiper spaceBetween={30} slidesPerView="auto" centeredSlides={true} loop={true} speed={4000} freeMode={true} autoplay={{ delay: 1, disableOnInteraction: false }} modules={[Autoplay, FreeMode]} className="w-full">
+             {[...(testimonials || []), ...(testimonials || []), ...(testimonials || []), ...(testimonials || [])].map((review: any, idx: number) => (
                <SwiperSlide key={idx} style={{ width: 'auto' }}>
-                 <div className="w-[350px] md:w-[450px] bg-white/5 border border-white/10 p-8 rounded-2xl relative hover:bg-white/10 transition cursor-grab">
-                    <div className="text-4xl text-blue-500 mb-4">❝</div>
-                    <p className="text-gray-300 mb-6 text-sm leading-relaxed">{review.feedback}</p>
-                    <div className="flex items-center gap-4 mt-auto">
-                        <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-700 border border-white/20">{review?.photo && <Image src={urlFor(review.photo).url()} alt={review.name} fill className="object-cover" />}</div>
-                        <div><h4 className="font-bold text-white text-sm">{review.name}</h4><p className="text-xs text-gray-500">{review.designation}</p></div>
+                 <div className="w-[350px] md:w-[450px] bg-white border border-gray-100 shadow-[0_20px_50px_rgba(0,0,0,0.06)] p-10 rounded-3xl relative hover:-translate-y-3 hover:shadow-[0_30px_60px_rgba(249,115,22,0.1)] transition-all duration-300 cursor-grab">
+                    <div className="text-7xl text-orange-200 absolute top-4 right-6 font-serif leading-none">❝</div>
+                    <p className="text-gray-700 mb-10 text-lg leading-relaxed relative z-10 font-medium italic">{review.feedback}</p>
+                    <div className="flex items-center gap-5 mt-auto">
+                        <div className="relative w-14 h-14 rounded-full overflow-hidden bg-gray-50 border-2 border-orange-500">{review?.photo && <Image src={urlFor(review.photo).url()} alt={review.name} fill className="object-cover" />}</div>
+                        <div><h4 className="font-black text-black text-lg">{review.name}</h4><p className="text-sm font-bold text-orange-500">{review.designation}</p></div>
                     </div>
                 </div>
                </SwiperSlide>
@@ -231,26 +128,24 @@ export default function ClientPage({ logos, projects, testimonials, certificates
           </Swiper>
         </section>
       </div>
-      
-      <footer id="contact" className="relative z-20 bg-black pt-20 pb-10 border-t border-white/10 mt-20">
+
+      <footer id="contact" className="relative z-20 bg-black pt-20 pb-10 border-t border-gray-800 mt-20">
         <div className="max-w-6xl mx-auto px-6 md:px-10">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-8 mb-20 bg-gradient-to-r from-blue-900/20 to-purple-900/20 p-10 rounded-3xl border border-white/5">
-                <div className="text-center md:text-left"><h2 className="text-3xl md:text-5xl font-bold mb-2 text-white">Ready to Scale?</h2><p className="text-gray-400 text-lg">Let's build your growth strategy today.</p></div>
-                <a href={siteConfig?.ctaLink || "https://wa.me/8801400905891"} target="_blank" className="group relative px-8 py-4 bg-white text-black font-bold text-lg rounded-full overflow-hidden shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(37,211,102,0.6)] transition-all">
-                    <span className="relative z-10 flex items-center gap-2 group-hover:text-white transition duration-300">
-                        <span className="relative w-5 h-5 block"><Image src="/wa.png" alt="WA" fill className="object-contain" /></span>
-                        {siteConfig?.ctaText || "Chat on WhatsApp"}
-                    </span>
-                    <div className="absolute inset-0 bg-[#25D366] transform scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-300 ease-out"></div>
+            <div className="flex flex-col md:flex-row justify-between items-center gap-8 mb-20 bg-gradient-to-r from-gray-900 to-black p-10 rounded-3xl border border-gray-800 shadow-2xl">
+                <div className="text-center md:text-left"><h2 className="text-3xl md:text-5xl font-black mb-2 text-white">Ready to Scale?</h2><p className="text-gray-400 text-lg font-medium">Let's build your growth strategy today.</p></div>
+                <a href={siteConfig?.ctaLink || "https://wa.me/8801400905891"} target="_blank" rel="noopener noreferrer" className="group relative px-10 py-5 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-black text-lg rounded-full overflow-hidden shadow-[0_15px_30px_rgba(249,115,22,0.3)] hover:-translate-y-1 transition-all">
+                    <span className="relative z-10 flex items-center gap-3"><span className="relative w-6 h-6 block"><Image src="/wa.png" alt="WA" fill className="object-contain" /></span>{siteConfig?.ctaText || "Chat on WhatsApp"}</span>
+                    <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
                 </a>
             </div>
-            <div className="flex flex-col md:flex-row justify-between items-center mt-16 pt-8 border-t border-white/5 text-xs text-gray-500">
+            <div className="flex flex-col md:flex-row justify-between items-center mt-16 pt-8 border-t border-gray-800 text-sm font-medium text-gray-500">
                 <p>© {new Date().getFullYear()} Tanvir Kabir | All rights reserved.</p>
-                <div className="flex gap-6 mt-4 md:mt-0">
-                    <FooterSocialIcon href="https://linkedin.com/in/tanvir-kabir-fahim" imgName="li.png" />
-                    <FooterSocialIcon href="https://facebook.com/fahiminframe" imgName="fb.png" />
-                    <FooterSocialIcon href="https://instagram.com/fahim_inframe" imgName="insta.png" />
-                    <FooterSocialIcon href="https://wa.me/8801400905891" imgName="wa.png" />
+                <div className="flex flex-wrap justify-center gap-4 mt-6 md:mt-0">
+                    {siteConfig?.socialIcons?.map((social: any, idx: number) => (
+                        <a key={idx} href={social.url || "#"} target="_blank" rel="noopener noreferrer" className="relative w-12 h-12 flex items-center justify-center hover:scale-110 hover:-translate-y-1 transition-all duration-300 bg-white/5 border border-white/10 rounded-full hover:bg-white hover:shadow-[0_0_20px_rgba(255,255,255,0.4)] group">
+                            {social.icon && <Image src={urlFor(social.icon).url()} alt={social.platform || "social"} width={20} height={20} className="object-contain group-hover:brightness-0 transition-all duration-300" />}
+                        </a>
+                    ))}
                 </div>
             </div>
         </div>

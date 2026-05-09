@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
+  darkMode: "class", // এই জাদুর লাইনটাই থিম চেঞ্জ করবে!
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -8,16 +9,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      animation: {
-        scroll: "scroll 30s linear infinite",
-        "scroll-slow": "scroll 60s linear infinite",
-      },
-      keyframes: {
-        scroll: {
-          to: {
-            transform: "translate(calc(-50% - 0.5rem))",
-          },
-        },
+      backgroundImage: {
+        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+        "gradient-conic":
+          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
     },
   },
