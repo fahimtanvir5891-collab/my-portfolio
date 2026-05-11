@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 // .env.local ফাইলে GEMINI_API_KEY রাখতে ভুলবেন না
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
     const { message } = await request.json();
 
