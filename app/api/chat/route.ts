@@ -24,9 +24,9 @@ export async function POST(request: Request) {
     3. Keep answers concise, crisp, and professional.
     4. ALWAYS end by pushing the user to contact Tanvir. Example: "Shall I direct you to the contact form so Tanvir can personally review your brand?"`;
 
-    // মডেল ইনিশিয়ালাইজ করা (System Instruction সহ)
+    // মডেল ইনিশিয়ালাইজ করা (মডেলের নাম ফিক্স করা হয়েছে)
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
+      model: "gemini-1.5-flash-latest",
       systemInstruction: systemPrompt,
     });
 
