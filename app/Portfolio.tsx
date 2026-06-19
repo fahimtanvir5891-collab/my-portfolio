@@ -6,8 +6,23 @@ import { urlFor } from "./sanity";
 import { motion, AnimatePresence } from "framer-motion";
 import { PortableText } from '@portabletext/react';
 
-// ফন্ট সাইজ স্ট্যান্ডার্ড করা হয়েছে
+// ফন্ট সাইজ স্ট্যান্ডার্ড করা হয়েছে এবং ইমেজের লজিক অ্যাড করা হয়েছে
 const ptComponents = {
+  types: {
+    image: ({ value }: any) => {
+      if (!value?.asset?._ref) return null;
+      return (
+        <div className="my-8 w-full flex justify-center">
+          <img
+            src={urlFor(value).url()}
+            alt={value.alt || "Project content image"}
+            className="rounded-2xl shadow-lg w-full max-h-[60vh] object-contain bg-gray-50 border border-gray-100 p-2"
+            loading="lazy"
+          />
+        </div>
+      );
+    },
+  },
   block: {
     normal: ({children}: any) => <p className="text-gray-600 text-base md:text-lg leading-relaxed mb-5 font-medium">{children}</p>,
     h1: ({children}: any) => <h1 className="text-3xl md:text-4xl font-black text-gray-900 mb-6 mt-10">{children}</h1>,
@@ -19,7 +34,7 @@ const ptComponents = {
   },
 };
 
-// ইমেজের হাইট 75vh থেকে কমিয়ে 55vh করা হয়েছে যাতে উইন্ডোতে অতিরিক্ত বড় না লাগে
+// ইমেজের হাইট 75vh থেকে কমিয়ে 55vh করা হয়েছে যাতে উইন্ডোতে অতিরিক্ত বড় না লাগে
 function DarazZoomImage({ src, alt }: { src: string, alt: string }) {
     const [position, setPosition] = useState("50% 50%");
     const [isHovered, setIsHovered] = useState(false);
@@ -55,10 +70,10 @@ export default function Portfolio({ projects, openProject, setOpenProject, isHom
 
     return (
         <div className="w-full">
-           {/* টাইটেলের সাইজ কমানো হয়েছে */}
+           {/* টাইটেলের সাইজ কমানো হয়েছে */}
            <h2 className="text-4xl md:text-5xl font-black text-center mb-12 text-black">Projects</h2>
 
-           {/* max-w-5xl দিয়ে কার্ডগুলোর সাইজ একটু ছোট ও স্মার্ট করা হয়েছে */}
+           {/* max-w-5xl দিয়ে কার্ডগুলোর সাইজ একটু ছোট ও স্মার্ট করা হয়েছে */}
            <div className="max-w-5xl mx-auto columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
                {displayProjects.map((proj: any) => (
                   <motion.div 

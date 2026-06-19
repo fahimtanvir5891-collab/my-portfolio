@@ -11,7 +11,23 @@ import { Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
 
+// এখানে ইমেজ রেন্ডার করার কাস্টম রুলস (types: { image }) অ্যাড করা হয়েছে
 const ptComponents = {
+  types: {
+    image: ({ value }: any) => {
+      if (!value?.asset?._ref) return null;
+      return (
+        <div className="my-8 w-full flex justify-center">
+          <img
+            src={urlFor(value).url()}
+            alt={value.alt || "Service content image"}
+            className="rounded-2xl shadow-lg w-full max-h-[60vh] object-contain bg-gray-50 border border-gray-100 p-2"
+            loading="lazy"
+          />
+        </div>
+      );
+    },
+  },
   block: {
     normal: ({children}: any) => <p className="text-gray-600 text-base md:text-lg leading-relaxed mb-5 font-medium">{children}</p>,
     h1: ({children}: any) => <h1 className="text-3xl md:text-4xl font-black text-gray-900 mb-6 mt-10">{children}</h1>,
@@ -23,7 +39,7 @@ const ptComponents = {
   },
 };
 
-// সার্ভিসের গিগ ইমেজের সাইজ 60vh থেকে কমিয়ে 45vh করা হয়েছে
+// সার্ভিসের গিগ ইমেজের সাইজ 60vh থেকে কমিয়ে 45vh করা হয়েছে
 function DarazZoomImage({ src, alt }: { src: string, alt: string }) {
     const [position, setPosition] = useState("50% 50%");
     const [isHovered, setIsHovered] = useState(false);
@@ -62,7 +78,7 @@ export default function Services({ services, isHomePage = true }: any) {
         <div className="w-full">
            <h2 className="text-4xl md:text-5xl font-black text-center mb-12 text-black">My <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-600">Services</span></h2>
 
-           {/* max-w-5xl দিয়ে কার্ড সাইজ স্ট্যান্ডার্ড করা হয়েছে */}
+           {/* max-w-5xl দিয়ে কার্ড সাইজ স্ট্যান্ডার্ড করা হয়েছে */}
            <div className="max-w-5xl mx-auto columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
                {displayServices.map((srv: any) => (
                   <motion.div 
