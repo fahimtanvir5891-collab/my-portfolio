@@ -31,7 +31,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       {/* 100% Off-White Background and Black Text setup */}
       <body className={`${inter.className} ${poppins.variable} bg-[#F9F9F6] text-black antialiased`}>
         <Navbar config={siteConfig} />
-        {children}
+        
+        {/* মোবাইলের জন্য ফুটারের নিচে এক্সট্রা প্যাডিং (pb-28) অ্যাড করা হলো, ডেস্কটপে নরমাল (md:pb-0) থাকবে */}
+        <div className="pb-28 md:pb-0">
+            {children}
+        </div>
+        
         <Analytics /> 
         <Chatbot />
         <ScrollToTop />
