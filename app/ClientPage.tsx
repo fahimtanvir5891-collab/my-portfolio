@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, Suspense } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { animate, useInView, motion, useSpring, useMotionValue } from "framer-motion";
 import { urlFor } from "./sanity";
 import Portfolio from "./Portfolio";
@@ -38,7 +39,6 @@ const ptComponents = {
     normal: ({children}: any) => <p className="text-gray-600 text-base md:text-lg leading-relaxed font-medium">{children}</p>,
     h1: ({children}: any) => {
         return (
-            // নিচের মার্জিন (mb) একদম জিরো করে দিয়েছি যাতে ছবি কাছাকাছি আসে
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tight text-black mb-0 leading-tight z-20 relative">
                 {children}
             </h1>
@@ -50,12 +50,43 @@ const ptComponents = {
   },
 };
 
-export default function ClientPage({ logos, projects, services, blogs, testimonials, homeData, siteConfig }: any) {
+function HomeContent({ logos, projects, services, blogs, testimonials, homeData, siteConfig }: any) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  
+  const projectIdFromUrl = searchParams.get("project");
+
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const springX = useSpring(mouseX, { stiffness: 500, damping: 28 });
   const springY = useSpring(mouseY, { stiffness: 500, damping: 28 });
   const [openProject, setOpenProject] = useState<any>(null);
+
+  useEffect(() => {
+    if (projectIdFromUrl && projects) {
+      const matchedProject = projects.find((p: any) => p._id === projectIdFromUrl);
+      if (matchedProject) {
+        setOpenProject(matchedProject);
+      }
+    } else {
+      setOpenProject(null);
+    }
+  }, [projectIdFromUrl, projects]);
+
+  const handleProjectChange = (project: any) => {
+    setOpenProject(project);
+    
+    const params = new URLSearchParams(searchParams.toString());
+    
+    if (project && project._id) {
+      params.set("project", project._id);
+    } else {
+      params.delete("project");
+    }
+    
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+  };
 
   useEffect(() => {
     const moveCursor = (e: MouseEvent) => { mouseX.set(e.clientX - 16); mouseY.set(e.clientY - 16); };
@@ -64,14 +95,13 @@ export default function ClientPage({ logos, projects, services, blogs, testimoni
   }, [mouseX, mouseY]);
 
   return (
-    <main className="relative min-h-screen overflow-hidden selection:bg-orange-500 selection:text-white bg-[#F9F9F6]">
+    <main className="relative min-h-screen overflow-x-hidden selection:bg-orange-500 selection:text-white bg-[#F9F9F6]">
       <motion.div className="fixed top-0 left-0 w-6 h-6 rounded-full border-2 border-orange-500 z-[9999] pointer-events-none hidden md:block" style={{ x: springX, y: springY }} />
       
-      {/* Background Glows */}
       <div className="fixed top-[-10%] left-[-10%] w-[400px] h-[400px] bg-orange-300/20 blur-[100px] rounded-full pointer-events-none"></div>
       <div className="fixed bottom-0 right-0 w-[400px] h-[400px] bg-yellow-400/10 blur-[100px] rounded-full pointer-events-none"></div>
 
-      <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8 pt-20 md:pt-24">
+      <div className="relative max-w-6xl mx-auto px-4 md:px-8 pt-20 md:pt-24">
         
         <section className="relative flex flex-col items-center justify-center pt-2 pb-6 md:pb-8 overflow-visible">
             
@@ -95,13 +125,8 @@ export default function ClientPage({ logos, projects, services, blogs, testimoni
                 )}
             </motion.div>
 
-            {/* Interactive Image Container - মার্জিন টপ দিয়ে ছবিটাকে টেক্সটের কাছে টানা হয়েছে */}
             <div className="relative w-full max-w-4xl h-auto flex justify-center items-end mt-4 md:mt-2 z-10">
                 
-                {/* মাস্টারপিস ফিক্স: পারফেক্ট হাফ-সার্কেল (Half-Circle) 
-                  উচ্চতা ঠিক প্রস্থের অর্ধেক (w-[480px] হলে h-[240px])। 
-                  এবং rounded-t-full দিয়ে শুধু ওপরটা গোল করা হয়েছে।
-                */}
                 <motion.div 
                     initial={{ scale: 0 }} 
                     animate={{ scale: 1 }} 
@@ -109,7 +134,6 @@ export default function ClientPage({ logos, projects, services, blogs, testimoni
                     className="absolute bottom-0 w-[280px] h-[140px] md:w-[480px] md:h-[240px] bg-orange-400 rounded-t-full blur-none" 
                 />
 
-                {/* Main Profile Cutout - ছবির উচ্চতা সার্কেলের চেয়ে দ্বিগুণ, তাই মাথা সার্কেলের ওপরে ভাসবে */}
                 <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.4 }} className="relative z-10 w-full h-[280px] md:h-[450px] flex justify-center items-end">
                     {homeData?.profileImage && (
                         <Image 
@@ -122,7 +146,6 @@ export default function ClientPage({ logos, projects, services, blogs, testimoni
                     )}
                 </motion.div>
 
-                {/* Floating Skill Badges - পজিশন ছবির সাথে এডজাস্ট করা হয়েছে */}
                 <div className="absolute inset-0 pointer-events-none z-20">
                     {homeData?.skillBadges?.map((badge: any, idx: number) => {
                         const positions = [
@@ -191,7 +214,10 @@ export default function ClientPage({ logos, projects, services, blogs, testimoni
           </Swiper>
         </section>
 
-        <section id="work" className="mb-24"><Portfolio projects={projects} openProject={openProject} setOpenProject={setOpenProject} isHomePage={true} /></section>
+        <section id="work" className="mb-24">
+            <Portfolio projects={projects} openProject={openProject} setOpenProject={handleProjectChange} isHomePage={true} />
+        </section>
+        
         <section id="service" className="mb-24"><Services services={services} isHomePage={true} /></section>
         <section id="blog" className="mb-24"><BlogList blogs={blogs} isHomePage={true} /></section>
 
@@ -236,5 +262,13 @@ export default function ClientPage({ logos, projects, services, blogs, testimoni
         </div>
       </footer>
     </main>
+  );
+}
+
+export default function ClientPage(props: any) {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#F9F9F6]"></div>}>
+      <HomeContent {...props} />
+    </Suspense>
   );
 }

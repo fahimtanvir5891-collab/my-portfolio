@@ -108,11 +108,12 @@ export default function Portfolio({ projects, openProject, setOpenProject, isHom
            )}
 
            <AnimatePresence>
+           {/* পপ-আপ উইন্ডোর z-index 9990 করা হয়েছে যাতে এটি ন্যাভবারের উপরে থাকে */}
            {openProject && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] bg-[#F9F9F6]/95 backdrop-blur-xl overflow-y-auto p-3 md:p-8 flex flex-col">
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[9990] bg-[#F9F9F6]/95 backdrop-blur-xl overflow-y-auto p-3 md:p-8 flex flex-col">
                  
-                 {/* ক্লোজ বাটনটি মোবাইলে একদম উপরে ডানে সেট করা হয়েছে যাতে চাপ দিতে সুবিধা হয় */}
-                 <button onClick={() => setOpenProject(null)} className="fixed top-4 right-4 md:top-10 md:right-10 w-10 h-10 bg-black text-white rounded-full font-bold text-lg hover:bg-orange-500 transition-colors z-[110] shadow-xl flex items-center justify-center">✕</button>
+                 {/* ক্লোজ বাটনটি z-[9999] দেওয়া হয়েছে যাতে ওয়েবসাইটের কোনো কিছুই একে ঢাকতে না পারে */}
+                 <button onClick={() => setOpenProject(null)} className="fixed top-4 right-4 md:top-10 md:right-10 w-10 h-10 bg-black text-white rounded-full font-bold text-lg hover:bg-orange-500 transition-colors z-[9999] shadow-xl flex items-center justify-center">✕</button>
                  
                  <div className="max-w-4xl mx-auto w-full pt-16 md:pt-24 pb-16">
                     <h2 className="text-2xl md:text-5xl font-black text-black mb-6 md:mb-8 text-center px-4 md:px-8">{openProject.title}</h2>
