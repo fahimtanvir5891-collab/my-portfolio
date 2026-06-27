@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import Script from "next/script";
 import { useEffect, useRef, useState, Suspense } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { animate, useInView, motion, useSpring, useMotionValue } from "framer-motion";
@@ -96,6 +97,10 @@ function HomeContent({ logos, projects, services, blogs, testimonials, homeData,
 
   return (
     <main className="relative min-h-screen overflow-x-hidden selection:bg-orange-500 selection:text-white bg-[#F9F9F6]">
+      
+      {/* LinkedIn Script Optimized Loading */}
+      <Script src="https://platform.linkedin.com/badges/js/profile.js" strategy="lazyOnload" />
+
       <motion.div className="fixed top-0 left-0 w-6 h-6 rounded-full border-2 border-orange-500 z-[9999] pointer-events-none hidden md:block" style={{ x: springX, y: springY }} />
       
       <div className="fixed top-[-10%] left-[-10%] w-[400px] h-[400px] bg-orange-300/20 blur-[100px] rounded-full pointer-events-none"></div>
@@ -242,6 +247,19 @@ function HomeContent({ logos, projects, services, blogs, testimonials, homeData,
 
       <footer id="contact" className="relative z-20 bg-black pt-16 pb-8 border-t border-gray-800 mt-16">
         <div className="max-w-6xl mx-auto px-6 md:px-8">
+            
+            {/* LinkedIn Live Badge Section */}
+            <div className="flex flex-col items-center justify-center mb-16">
+                <p className="text-gray-400 text-xs md:text-sm font-bold mb-6 uppercase tracking-widest text-center">Connect with me on LinkedIn</p>
+                <div className="bg-[#1D2226] p-2 md:p-4 rounded-xl md:rounded-2xl border border-gray-800 shadow-[0_10px_30px_rgba(0,0,0,0.5)] hover:border-orange-500/30 transition-colors duration-500 overflow-hidden w-full max-w-[350px] flex justify-center min-h-[250px] items-center">
+                    <div className="badge-base LI-profile-badge" data-locale="en_US" data-size="large" data-theme="dark" data-type="HORIZONTAL" data-vanity="tanvir-kabir-fahim" data-version="v1">
+                        <a className="badge-base__link LI-simple-link" href="https://bd.linkedin.com/in/tanvir-kabir-fahim?trk=profile-badge">
+                            Md Tanvir Kabir
+                        </a>
+                    </div>
+                </div>
+            </div>
+
             <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-16 bg-gradient-to-r from-gray-900 to-black p-8 rounded-3xl border border-gray-800 shadow-2xl">
                 <div className="text-center md:text-left"><h2 className="text-3xl md:text-4xl font-black mb-2 text-white">Ready to Scale?</h2><p className="text-gray-400 text-base font-medium">Let's build your growth strategy today.</p></div>
                 <a href={siteConfig?.ctaLink || "https://wa.me/8801400905891"} target="_blank" rel="noopener noreferrer" className="group relative px-8 py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-bold text-base rounded-full overflow-hidden shadow-[0_10px_20px_rgba(249,115,22,0.3)] hover:-translate-y-1 transition-all">
@@ -249,6 +267,7 @@ function HomeContent({ logos, projects, services, blogs, testimonials, homeData,
                     <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
                 </a>
             </div>
+            
             <div className="flex flex-col md:flex-row justify-between items-center mt-12 pt-6 border-t border-gray-800 text-xs font-medium text-gray-500">
                 <p>© {new Date().getFullYear()} Tanvir Kabir | All rights reserved.</p>
                 <div className="flex flex-wrap justify-center gap-4 mt-4 md:mt-0">
