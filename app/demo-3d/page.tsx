@@ -3,7 +3,6 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
-import Image from "next/image";
 
 export default function Demo3D() {
   const containerRef = useRef(null);
@@ -13,192 +12,194 @@ export default function Demo3D() {
     offset: ["start start", "end end"]
   });
 
-  // --- 1. BACKGROUND GLOW ANIMATIONS ---
-  const glowX1 = useTransform(scrollYProgress, [0, 1], ["-20%", "50%"]);
+  // --- 1. BACKGROUND GLOW (Animated behind the glass) ---
+  const glowX1 = useTransform(scrollYProgress, [0, 1], ["-20%", "80%"]);
   const glowY1 = useTransform(scrollYProgress, [0, 1], ["-20%", "80%"]);
-  const glowX2 = useTransform(scrollYProgress, [0, 1], ["100%", "20%"]);
+  const glowX2 = useTransform(scrollYProgress, [0, 1], ["100%", "-20%"]);
   const glowY2 = useTransform(scrollYProgress, [0, 1], ["100%", "0%"]);
+  const glowX3 = useTransform(scrollYProgress, [0, 1], ["50%", "0%"]);
+  const glowY3 = useTransform(scrollYProgress, [0, 1], ["50%", "100%"]);
 
-  // --- 2. CENTER PHOTO ANIMATION (Starts huge, moves to corner) ---
-  const photoScale = useTransform(scrollYProgress, [0, 0.3], [1, 0.3]);
-  const photoX = useTransform(scrollYProgress, [0, 0.3], ["0%", "35vw"]);
-  const photoY = useTransform(scrollYProgress, [0, 0.3], ["0%", "-35vh"]);
-  const photoRotate = useTransform(scrollYProgress, [0, 0.3], [0, 10]);
-
-  // --- 3. TITLE ANIMATIONS (Splits apart horizontally) ---
-  const titleLeftX = useTransform(scrollYProgress, [0, 0.3], ["0%", "-100vw"]);
-  const titleRightX = useTransform(scrollYProgress, [0, 0.3], ["0%", "100vw"]);
-  const titleOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0]);
-  const titleScale = useTransform(scrollYProgress, [0, 0.25], [1, 1.5]);
-
-  // --- 4. LEFT SIDEBAR ELEMENTS (Flying badges & text) ---
-  const leftTextY = useTransform(scrollYProgress, [0, 0.4], ["0%", "100vh"]);
-  const leftTextRotate = useTransform(scrollYProgress, [0, 0.4], [-90, -180]);
+  // --- 2. PHASE 1: INITIAL HERO (0 to 0.15) ---
+  // The Photo shrinks and moves up
+  const heroScale = useTransform(scrollYProgress, [0, 0.15], [1, 0.4]);
+  const heroY = useTransform(scrollYProgress, [0, 0.15], ["0%", "-100vh"]);
+  const heroOpacity = useTransform(scrollYProgress, [0.1, 0.15], [1, 0]);
   
-  const badge1X = useTransform(scrollYProgress, [0.05, 0.35], ["-200%", "20%"]);
-  const badge1Rotate = useTransform(scrollYProgress, [0.05, 0.35], [-180, -10]);
-  const badge1Scale = useTransform(scrollYProgress, [0.05, 0.35], [0, 1]);
+  // "Tanvir" slides way left, "Kabir" slides way right
+  const nameLeftX = useTransform(scrollYProgress, [0, 0.15], ["0%", "-100vw"]);
+  const nameRightX = useTransform(scrollYProgress, [0, 0.15], ["0%", "100vw"]);
 
-  // --- 5. RIGHT SIDEBAR ELEMENTS ---
-  const rightShapeRotate = useTransform(scrollYProgress, [0, 0.5], [0, 360]);
-  const rightShapeY = useTransform(scrollYProgress, [0, 0.5], ["0%", "-100vh"]);
-  const rightShapeScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.5]);
+  // --- 3. PHASE 2: THE JOURNEY (0.15 to 0.35) ---
+  const journeyY = useTransform(scrollYProgress, [0.15, 0.25, 0.35], ["100vh", "0vh", "-100vh"]);
+  const journeyOpacity = useTransform(scrollYProgress, [0.15, 0.2, 0.3, 0.35], [0, 1, 1, 0]);
+  const journeyScale = useTransform(scrollYProgress, [0.15, 0.25, 0.35], [0.8, 1, 1.2]);
 
-  const badge2X = useTransform(scrollYProgress, [0.05, 0.35], ["200%", "-20%"]);
-  const badge2Rotate = useTransform(scrollYProgress, [0.05, 0.35], [180, 10]);
-  const badge2Scale = useTransform(scrollYProgress, [0.05, 0.35], [0, 1]);
+  // --- 4. PHASE 3: BUILDING TRUST (0.35 to 0.55) ---
+  const trustY = useTransform(scrollYProgress, [0.35, 0.45, 0.55], ["100vh", "0vh", "-100vh"]);
+  const trustOpacity = useTransform(scrollYProgress, [0.35, 0.4, 0.5, 0.55], [0, 1, 1, 0]);
+  const trustScale = useTransform(scrollYProgress, [0.35, 0.45, 0.55], [0.8, 1, 1.2]);
 
-  // --- 6. THE 3D CARDS ARRAY (Rising from bottom, unfolding like a fan) ---
-  const cardsGroupY = useTransform(scrollYProgress, [0.2, 0.6], ["150%", "0%"]);
-  const cardsGroupRotateX = useTransform(scrollYProgress, [0.2, 0.6], [75, 0]);
-  const cardsGroupScale = useTransform(scrollYProgress, [0.2, 0.6, 0.9, 1], [0.6, 1, 1.2, 1.8]);
+  // --- 5. PHASE 4: DATA-DRIVEN PRECISION (0.55 to 0.75) ---
+  const dataY = useTransform(scrollYProgress, [0.55, 0.65, 0.75], ["100vh", "0vh", "-100vh"]);
+  const dataOpacity = useTransform(scrollYProgress, [0.55, 0.6, 0.7, 0.75], [0, 1, 1, 0]);
+  const dataScale = useTransform(scrollYProgress, [0.55, 0.65, 0.75], [0.8, 1, 1.2]);
 
-  const leftCardX = useTransform(scrollYProgress, [0.4, 0.7], ["0%", "-110%"]);
-  const leftCardRotateZ = useTransform(scrollYProgress, [0.4, 0.7], [0, -15]);
+  // --- 6. PHASE 5: THE 3D GLASS CARDS FINALE (0.75 to 0.95) ---
+  const cardsGroupY = useTransform(scrollYProgress, [0.75, 0.85], ["150%", "0%"]);
+  const cardsGroupRotateX = useTransform(scrollYProgress, [0.75, 0.85], [75, 0]);
+  const cardsGroupScale = useTransform(scrollYProgress, [0.75, 0.85, 1], [0.6, 1, 1.3]);
+  const cardsOpacity = useTransform(scrollYProgress, [0.75, 0.8, 0.95, 1], [0, 1, 1, 0]);
 
-  const rightCardX = useTransform(scrollYProgress, [0.4, 0.7], ["0%", "110%"]);
-  const rightCardRotateZ = useTransform(scrollYProgress, [0.4, 0.7], [0, 15]);
+  const leftCardX = useTransform(scrollYProgress, [0.8, 0.9], ["0%", "-110%"]);
+  const leftCardRotateZ = useTransform(scrollYProgress, [0.8, 0.9], [0, -10]);
 
-  const centerCardZ = useTransform(scrollYProgress, [0.4, 0.7], [0, 150]);
+  const rightCardX = useTransform(scrollYProgress, [0.8, 0.9], ["0%", "110%"]);
+  const rightCardRotateZ = useTransform(scrollYProgress, [0.8, 0.9], [0, 10]);
+  
+  const centerCardZ = useTransform(scrollYProgress, [0.8, 0.9], [0, 150]);
 
-  // --- 7. MASTER FADE OUT AT END ---
-  const everythingOpacity = useTransform(scrollYProgress, [0.85, 0.95], [1, 0]);
+  // Common Liquid Glass styling class
+  const liquidGlassClass = "bg-white/40 backdrop-blur-2xl border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.05),0_0_0_1px_rgba(255,255,255,0.5)_inset] rounded-[2rem]";
 
   return (
-    <div className="bg-[#F9F9F6] text-black min-h-screen overflow-x-hidden font-sans">
+    <div className="bg-[#F9F9F6] text-black min-h-screen overflow-x-hidden font-sans selection:bg-orange-500 selection:text-white">
       
-      {/* 500vh gives us plenty of scroll room for complex sequences */}
-      <div ref={containerRef} className="h-[500vh] relative">
+      {/* 800vh allows a long, epic journey sequence */}
+      <div ref={containerRef} className="h-[800vh] relative">
         <div 
             className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden"
             style={{ perspective: 1500 }}
         >
-          {/* BACKGROUND EFFECTS */}
-          <motion.div 
-            style={{ x: glowX1, y: glowY1 }} 
-            className="absolute w-[600px] h-[600px] md:w-[800px] md:h-[800px] bg-orange-500/20 rounded-full blur-[120px] pointer-events-none"
-          />
-          <motion.div 
-            style={{ x: glowX2, y: glowY2 }} 
-            className="absolute w-[400px] h-[400px] md:w-[600px] md:h-[600px] bg-yellow-400/20 rounded-full blur-[100px] pointer-events-none"
-          />
+          {/* --- BACKGROUND BLOBS FOR GLASS REFRACTION --- */}
+          <motion.div style={{ x: glowX1, y: glowY1 }} className="absolute w-[60vw] h-[60vw] max-w-[800px] max-h-[800px] bg-orange-400/20 rounded-full blur-[100px] pointer-events-none" />
+          <motion.div style={{ x: glowX2, y: glowY2 }} className="absolute w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] bg-pink-400/20 rounded-full blur-[100px] pointer-events-none" />
+          <motion.div style={{ x: glowX3, y: glowY3 }} className="absolute w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] bg-yellow-400/20 rounded-full blur-[100px] pointer-events-none" />
 
-          <motion.div style={{ opacity: everythingOpacity }} className="w-full h-full absolute inset-0 flex items-center justify-center transform-gpu">
+          <div className="w-full h-full absolute inset-0 flex items-center justify-center transform-gpu">
              
-              {/* --- LEFT SIDE: Floating background text --- */}
+              {/* --- PHASE 1: HERO (Tanvir [PHOTO] Kabir) --- */}
               <motion.div 
-                style={{ y: leftTextY, rotate: leftTextRotate }}
-                className="absolute left-4 md:left-10 text-[8vw] md:text-[6vw] font-black text-black/5 whitespace-nowrap origin-center"
+                style={{ scale: heroScale, y: heroY, opacity: heroOpacity }}
+                className="absolute z-40 flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 w-full px-4"
               >
-                  DATA DRIVEN ADS
-              </motion.div>
-
-              {/* --- LEFT SIDE: Animated Badge --- */}
-              <motion.div
-                style={{ x: badge1X, rotate: badge1Rotate, scale: badge1Scale }}
-                className="absolute left-[5%] md:left-[10%] top-[20%] md:top-[30%] bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl shadow-[0_20px_40px_rgba(0,0,0,0.1)] border border-orange-100 z-30"
-              >
-                  <div className="text-3xl md:text-5xl font-black text-orange-500">102+</div>
-                  <div className="text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest mt-1">Happy Clients</div>
-              </motion.div>
-
-              {/* --- RIGHT SIDE: Geometric Floating Shape --- */}
-              <motion.div
-                style={{ y: rightShapeY, rotate: rightShapeRotate, scale: rightShapeScale }}
-                className="absolute right-10 md:right-32 top-1/4 w-24 h-24 md:w-32 md:h-32 border-[8px] md:border-[12px] border-orange-500/10 rounded-2xl md:rounded-3xl"
-              />
-
-              {/* --- RIGHT SIDE: Animated Badge --- */}
-              <motion.div
-                style={{ x: badge2X, rotate: badge2Rotate, scale: badge2Scale }}
-                className="absolute right-[5%] md:right-[10%] bottom-[20%] md:bottom-[30%] bg-gradient-to-tr from-orange-500 to-yellow-500 p-4 md:p-6 rounded-2xl md:rounded-3xl shadow-[0_20px_40px_rgba(249,115,22,0.3)] text-white z-30"
-              >
-                  <div className="text-3xl md:text-5xl font-black">4 YRS</div>
-                  <div className="text-[10px] md:text-xs font-bold uppercase tracking-widest mt-1">Experience</div>
-              </motion.div>
-
-              {/* --- CENTER HERO PHOTO --- */}
-              <motion.div 
-                style={{ scale: photoScale, x: photoX, y: photoY, rotate: photoRotate }}
-                className="absolute z-40 w-[280px] h-[380px] md:w-[350px] md:h-[450px] rounded-[2rem] overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.2)] border-4 border-white"
-              >
-                  <div className="absolute inset-0 bg-orange-600/10 z-10"></div>
-                  {/* Using a placeholder portrait. When moved to the real site, we will use your real photo. */}
-                  <div className="w-full h-full bg-[url('https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&q=80')] bg-cover bg-center"></div>
-                  <div className="absolute bottom-6 left-0 w-full text-center z-20 flex justify-center">
-                     <span className="bg-black/80 backdrop-blur-md text-white px-4 py-2 rounded-full text-xs font-bold border border-white/20">
-                         (Here will be your actual photo)
-                     </span>
-                  </div>
-              </motion.div>
-
-              {/* --- SPLITTING TITLE --- */}
-              <div className="absolute z-50 flex flex-col md:flex-row gap-2 md:gap-8 w-full justify-center items-center pointer-events-none mix-blend-difference md:mix-blend-normal">
-                  <motion.h1 
-                    style={{ x: titleLeftX, opacity: titleOpacity, scale: titleScale }}
-                    className="text-[clamp(4rem,12vw,9rem)] font-black text-black leading-none drop-shadow-2xl md:drop-shadow-none"
-                  >
+                  {/* Left Name */}
+                  <motion.h1 style={{ x: nameLeftX }} className="text-[clamp(3.5rem,8vw,7rem)] font-black text-black leading-none drop-shadow-xl md:drop-shadow-none">
                      Tanvir
                   </motion.h1>
-                  <motion.h1 
-                    style={{ x: titleRightX, opacity: titleOpacity, scale: titleScale }}
-                    className="text-[clamp(4rem,12vw,9rem)] font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-yellow-500 leading-none drop-shadow-2xl md:drop-shadow-none"
-                  >
+
+                  {/* Liquid Glass Photo Container */}
+                  <div className={`relative w-[240px] h-[320px] md:w-[320px] md:h-[420px] flex items-center justify-center p-3 ${liquidGlassClass} shadow-[0_20px_50px_rgba(0,0,0,0.1)]`}>
+                      <div className="absolute inset-0 bg-gradient-to-tr from-white/40 to-transparent rounded-[2rem] pointer-events-none"></div>
+                      <div className="w-full h-full rounded-2xl overflow-hidden relative">
+                         <div className="w-full h-full bg-[url('https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&q=80')] bg-cover bg-center"></div>
+                      </div>
+                      <div className="absolute -bottom-5 bg-black text-white px-5 py-2 rounded-full text-xs font-bold shadow-xl border border-white/20 whitespace-nowrap">
+                         (Your Photo Here)
+                      </div>
+                  </div>
+
+                  {/* Right Name */}
+                  <motion.h1 style={{ x: nameRightX }} className="text-[clamp(3.5rem,8vw,7rem)] font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-yellow-500 leading-none drop-shadow-xl md:drop-shadow-none">
                      Kabir
                   </motion.h1>
-              </div>
+              </motion.div>
 
-              {/* --- 3D CARDS FAN REVEAL --- */}
-              <motion.div
-                style={{ y: cardsGroupY, rotateX: cardsGroupRotateX, scale: cardsGroupScale, transformStyle: "preserve-3d" }}
-                className="absolute z-20 flex items-center justify-center w-full mt-[20vh] md:mt-0"
+              {/* --- PHASE 2: THE JOURNEY --- */}
+              <motion.div 
+                style={{ y: journeyY, opacity: journeyOpacity, scale: journeyScale }}
+                className={`absolute z-30 flex flex-col items-center text-center p-10 md:p-16 max-w-2xl mx-4 ${liquidGlassClass}`}
               >
-                 {/* Left Sub-Card */}
+                 <div className="w-16 h-16 bg-gradient-to-tr from-orange-400 to-pink-500 rounded-full flex items-center justify-center mb-6 shadow-lg text-white font-black text-2xl">1</div>
+                 <h2 className="text-3xl md:text-5xl font-black text-black mb-4">The Journey Begins</h2>
+                 <p className="text-lg md:text-xl text-gray-700 font-medium leading-relaxed">
+                   Started with a passion for marketing. Evolved into a data-driven ads master. Generating over <span className="text-orange-600 font-bold">$10M+ in ROAS</span> for e-commerce brands globally.
+                 </p>
+              </motion.div>
+
+              {/* --- PHASE 3: BUILDING TRUST --- */}
+              <motion.div 
+                style={{ y: trustY, opacity: trustOpacity, scale: trustScale }}
+                className={`absolute z-30 flex flex-col items-center text-center p-10 md:p-16 max-w-2xl mx-4 ${liquidGlassClass}`}
+              >
+                 <div className="w-16 h-16 bg-gradient-to-tr from-blue-400 to-teal-400 rounded-full flex items-center justify-center mb-6 shadow-lg text-white font-black text-2xl">2</div>
+                 <h2 className="text-3xl md:text-5xl font-black text-black mb-4">Building Trust</h2>
+                 <p className="text-lg md:text-xl text-gray-700 font-medium leading-relaxed mb-8">
+                   Trust isn't given, it's earned through consistent results. My track record speaks for itself.
+                 </p>
+                 <div className="flex gap-4 w-full justify-center">
+                    <div className="bg-white/50 backdrop-blur-md px-6 py-4 rounded-xl border border-white/60">
+                        <span className="block text-3xl font-black text-blue-600">102+</span>
+                        <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Brands Scaled</span>
+                    </div>
+                    <div className="bg-white/50 backdrop-blur-md px-6 py-4 rounded-xl border border-white/60">
+                        <span className="block text-3xl font-black text-teal-600">98%</span>
+                        <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Retention Rate</span>
+                    </div>
+                 </div>
+              </motion.div>
+
+              {/* --- PHASE 4: DATA-DRIVEN PRECISION --- */}
+              <motion.div 
+                style={{ y: dataY, opacity: dataOpacity, scale: dataScale }}
+                className={`absolute z-30 flex flex-col items-center text-center p-10 md:p-16 max-w-2xl mx-4 ${liquidGlassClass}`}
+              >
+                 <div className="w-16 h-16 bg-gradient-to-tr from-purple-500 to-orange-500 rounded-full flex items-center justify-center mb-6 shadow-lg text-white font-black text-2xl">3</div>
+                 <h2 className="text-3xl md:text-5xl font-black text-black mb-4">Data-Driven Precision</h2>
+                 <p className="text-lg md:text-xl text-gray-700 font-medium leading-relaxed">
+                   No guesswork. No emotion. Just pure analytics, aggressive testing, and strategic scaling to dominate your market.
+                 </p>
+              </motion.div>
+
+              {/* --- PHASE 5: 3D GLASS CARDS REVEAL --- */}
+              <motion.div
+                style={{ y: cardsGroupY, rotateX: cardsGroupRotateX, scale: cardsGroupScale, opacity: cardsOpacity, transformStyle: "preserve-3d" }}
+                className="absolute z-20 flex items-center justify-center w-full mt-10 md:mt-0"
+              >
+                 {/* Left Glass Sub-Card */}
                  <motion.div 
                    style={{ x: leftCardX, rotateZ: leftCardRotateZ }}
-                   className="absolute w-[260px] h-[360px] md:w-[300px] md:h-[400px] bg-white rounded-3xl shadow-2xl border border-gray-100 p-6 flex flex-col justify-end overflow-hidden"
+                   className={`absolute w-[260px] h-[360px] md:w-[300px] md:h-[400px] p-6 flex flex-col justify-end overflow-hidden ${liquidGlassClass}`}
                  >
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10"></div>
-                    <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80')] bg-cover opacity-80"></div>
-                    <h3 className="relative z-20 text-2xl font-black text-white">Performance</h3>
-                    <p className="relative z-20 text-orange-400 font-bold tracking-widest uppercase text-xs mt-1">Marketing</p>
+                    <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80')] bg-cover opacity-20 mix-blend-overlay"></div>
+                    <h3 className="relative z-20 text-2xl font-black text-black">Performance</h3>
+                    <p className="relative z-20 text-orange-600 font-bold tracking-widest uppercase text-xs mt-1">Marketing</p>
                  </motion.div>
 
-                 {/* Right Sub-Card */}
+                 {/* Right Glass Sub-Card */}
                  <motion.div 
                    style={{ x: rightCardX, rotateZ: rightCardRotateZ }}
-                   className="absolute w-[260px] h-[360px] md:w-[300px] md:h-[400px] bg-white rounded-3xl shadow-2xl border border-gray-100 p-6 flex flex-col justify-end overflow-hidden"
+                   className={`absolute w-[260px] h-[360px] md:w-[300px] md:h-[400px] p-6 flex flex-col justify-end overflow-hidden ${liquidGlassClass}`}
                  >
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10"></div>
-                    <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80')] bg-cover opacity-80"></div>
-                    <h3 className="relative z-20 text-2xl font-black text-white">Data Analytics</h3>
-                    <p className="relative z-20 text-orange-400 font-bold tracking-widest uppercase text-xs mt-1">Strategy</p>
+                    <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80')] bg-cover opacity-20 mix-blend-overlay"></div>
+                    <h3 className="relative z-20 text-2xl font-black text-black">Data Analytics</h3>
+                    <p className="relative z-20 text-orange-600 font-bold tracking-widest uppercase text-xs mt-1">Strategy</p>
                  </motion.div>
 
-                 {/* Center Main Card */}
+                 {/* Center Main Glass Card */}
                  <motion.div 
                    style={{ translateZ: centerCardZ }}
-                   className="relative w-[300px] h-[400px] md:w-[350px] md:h-[450px] bg-gradient-to-br from-gray-900 to-black rounded-3xl shadow-[0_40px_100px_rgba(0,0,0,0.3)] border border-gray-700 p-8 flex flex-col items-center justify-center text-center z-10"
+                   className={`relative w-[300px] h-[400px] md:w-[350px] md:h-[450px] p-8 flex flex-col items-center justify-center text-center z-10 ${liquidGlassClass} !bg-white/60`}
                  >
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-orange-500/20 via-transparent to-transparent"></div>
-                    <h2 className="text-3xl md:text-4xl font-black text-white mb-4 relative z-10">Unlocking <br/><span className="text-orange-500">Growth</span></h2>
-                    <p className="text-gray-400 font-medium text-sm md:text-base relative z-10">Keep scrolling to enter the main website</p>
-                    <div className="mt-8 w-12 h-12 md:w-16 md:h-16 rounded-full border-t-2 border-r-2 border-orange-500 animate-spin relative z-10"></div>
+                    <div className="w-20 h-20 bg-gradient-to-tr from-orange-400 to-yellow-400 rounded-full blur-xl absolute top-10 right-10 opacity-50"></div>
+                    <h2 className="text-3xl md:text-4xl font-black text-black mb-4 relative z-10">Unlocking <br/><span className="text-orange-500">Growth</span></h2>
+                    <p className="text-gray-600 font-medium text-sm md:text-base relative z-10">Keep scrolling to enter the main website</p>
+                    <div className="mt-8 w-12 h-12 md:w-16 md:h-16 rounded-full border-t-4 border-r-4 border-orange-500 animate-spin relative z-10"></div>
                  </motion.div>
               </motion.div>
 
-          </motion.div>
+          </div>
         </div>
       </div>
 
-      <div className="min-h-screen bg-white relative z-30 pt-24 border-t border-gray-100 shadow-[0_-20px_40px_rgba(0,0,0,0.05)]">
+      <div className="min-h-screen bg-[#F9F9F6] relative z-30 pt-24 border-t border-white shadow-[0_-20px_40px_rgba(0,0,0,0.05)] backdrop-blur-3xl">
          <div className="max-w-4xl mx-auto px-6 text-center">
             <h2 className="text-4xl md:text-6xl font-black text-black mb-6">Welcome to the Website</h2>
             <p className="text-lg md:text-xl text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
-                এই ডিজাইনে আপনার ছবি, নাম এবং <strong>একসাথে প্রায় ৮-১০ টি আলাদা অ্যানিমেশন</strong> যুক্ত করা হয়েছে! 
-                ডান ও বাম পাশের ফাঁকা জায়গাগুলো উড়ন্ত ব্যাজ, টেক্সট এবং ইফেক্ট দিয়ে ভরিয়ে দেওয়া হয়েছে। 
+                এই ডিজাইনে আপনার কথা অনুযায়ী <strong>Tanvir [ছবি] Kabir</strong> লেআউট রাখা হয়েছে। 
+                আর পুরো অ্যানিমেশনটিতে <strong>Apple-এর "Liquid Glassmorphism"</strong> ইফেক্ট ব্যবহার করে একটি দীর্ঘ "জার্নি ও ট্রাস্ট" স্টোরি তৈরি করা হয়েছে। 
             </p>
-            <Link href="/" className="inline-flex px-8 py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-black rounded-full shadow-lg hover:-translate-y-1 transition-all">
+            <Link href="/" className="inline-flex px-8 py-4 bg-black text-white font-black rounded-full shadow-lg hover:bg-orange-500 hover:scale-105 transition-all">
                 Back to Main Site
             </Link>
          </div>
