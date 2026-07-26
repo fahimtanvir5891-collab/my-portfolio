@@ -3,135 +3,206 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Demo3D() {
   const containerRef = useRef(null);
   
-  // Track the scroll progress of our container
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"]
   });
 
-  // --- Step 1: Initial Text Animation (Fades out as we scroll down) ---
-  const titleOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
-  const titleY = useTransform(scrollYProgress, [0, 0.15], ["0%", "-50%"]);
-  const titleScale = useTransform(scrollYProgress, [0, 0.15], [1, 0.9]);
+  // --- 1. BACKGROUND GLOW ANIMATIONS ---
+  const glowX1 = useTransform(scrollYProgress, [0, 1], ["-20%", "50%"]);
+  const glowY1 = useTransform(scrollYProgress, [0, 1], ["-20%", "80%"]);
+  const glowX2 = useTransform(scrollYProgress, [0, 1], ["100%", "20%"]);
+  const glowY2 = useTransform(scrollYProgress, [0, 1], ["100%", "0%"]);
 
-  // --- Step 2: The 3D Element enters and rotates ---
-  // Start deep in the background, scale up and rotate smoothly
-  const cardRotateX = useTransform(scrollYProgress, [0.1, 0.4, 0.7], [60, 20, 0]);
-  const cardRotateY = useTransform(scrollYProgress, [0.1, 0.4, 0.7], [0, -5, 0]);
-  const cardScale = useTransform(scrollYProgress, [0.1, 0.4, 0.7, 0.9, 1], [0.6, 0.8, 1, 1.1, 1.5]);
-  const cardOpacity = useTransform(scrollYProgress, [0.05, 0.15, 0.8, 1], [0, 1, 1, 0]);
-  const cardY = useTransform(scrollYProgress, [0.1, 0.4, 0.7], ["100%", "20%", "0%"]);
+  // --- 2. CENTER PHOTO ANIMATION (Starts huge, moves to corner) ---
+  const photoScale = useTransform(scrollYProgress, [0, 0.3], [1, 0.3]);
+  const photoX = useTransform(scrollYProgress, [0, 0.3], ["0%", "35vw"]);
+  const photoY = useTransform(scrollYProgress, [0, 0.3], ["0%", "-35vh"]);
+  const photoRotate = useTransform(scrollYProgress, [0, 0.3], [0, 10]);
 
-  // --- Step 3: 3D Parallax inside the card ---
-  const innerZ = useTransform(scrollYProgress, [0.4, 0.7], [0, 80]);
+  // --- 3. TITLE ANIMATIONS (Splits apart horizontally) ---
+  const titleLeftX = useTransform(scrollYProgress, [0, 0.3], ["0%", "-100vw"]);
+  const titleRightX = useTransform(scrollYProgress, [0, 0.3], ["0%", "100vw"]);
+  const titleOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0]);
+  const titleScale = useTransform(scrollYProgress, [0, 0.25], [1, 1.5]);
+
+  // --- 4. LEFT SIDEBAR ELEMENTS (Flying badges & text) ---
+  const leftTextY = useTransform(scrollYProgress, [0, 0.4], ["0%", "100vh"]);
+  const leftTextRotate = useTransform(scrollYProgress, [0, 0.4], [-90, -180]);
   
+  const badge1X = useTransform(scrollYProgress, [0.05, 0.35], ["-200%", "20%"]);
+  const badge1Rotate = useTransform(scrollYProgress, [0.05, 0.35], [-180, -10]);
+  const badge1Scale = useTransform(scrollYProgress, [0.05, 0.35], [0, 1]);
+
+  // --- 5. RIGHT SIDEBAR ELEMENTS ---
+  const rightShapeRotate = useTransform(scrollYProgress, [0, 0.5], [0, 360]);
+  const rightShapeY = useTransform(scrollYProgress, [0, 0.5], ["0%", "-100vh"]);
+  const rightShapeScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.5]);
+
+  const badge2X = useTransform(scrollYProgress, [0.05, 0.35], ["200%", "-20%"]);
+  const badge2Rotate = useTransform(scrollYProgress, [0.05, 0.35], [180, 10]);
+  const badge2Scale = useTransform(scrollYProgress, [0.05, 0.35], [0, 1]);
+
+  // --- 6. THE 3D CARDS ARRAY (Rising from bottom, unfolding like a fan) ---
+  const cardsGroupY = useTransform(scrollYProgress, [0.2, 0.6], ["150%", "0%"]);
+  const cardsGroupRotateX = useTransform(scrollYProgress, [0.2, 0.6], [75, 0]);
+  const cardsGroupScale = useTransform(scrollYProgress, [0.2, 0.6, 0.9, 1], [0.6, 1, 1.2, 1.8]);
+
+  const leftCardX = useTransform(scrollYProgress, [0.4, 0.7], ["0%", "-110%"]);
+  const leftCardRotateZ = useTransform(scrollYProgress, [0.4, 0.7], [0, -15]);
+
+  const rightCardX = useTransform(scrollYProgress, [0.4, 0.7], ["0%", "110%"]);
+  const rightCardRotateZ = useTransform(scrollYProgress, [0.4, 0.7], [0, 15]);
+
+  const centerCardZ = useTransform(scrollYProgress, [0.4, 0.7], [0, 150]);
+
+  // --- 7. MASTER FADE OUT AT END ---
+  const everythingOpacity = useTransform(scrollYProgress, [0.85, 0.95], [1, 0]);
+
   return (
-    <div className="bg-[#F9F9F6] text-black min-h-screen selection:bg-orange-500 selection:text-white">
+    <div className="bg-[#F9F9F6] text-black min-h-screen overflow-x-hidden font-sans">
       
-      {/* 
-        Scroll container: h-[400vh] gives the user 4 screens of scrolling 
-        to complete the animation before reaching the next section.
-      */}
-      <div ref={containerRef} className="h-[400vh] relative">
-        
-        {/* Sticky viewport */}
+      {/* 500vh gives us plenty of scroll room for complex sequences */}
+      <div ref={containerRef} className="h-[500vh] relative">
         <div 
-            className="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden"
-            style={{ perspective: 1200 }}
+            className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden"
+            style={{ perspective: 1500 }}
         >
-          {/* Scroll Indicator */}
+          {/* BACKGROUND EFFECTS */}
           <motion.div 
-             style={{ opacity: titleOpacity }}
-             className="absolute bottom-10 flex flex-col items-center gap-2"
-          >
-             <span className="text-[10px] font-bold tracking-widest uppercase text-gray-400">Scroll to explore</span>
-             <div className="w-[1px] h-12 bg-gradient-to-b from-gray-400 to-transparent"></div>
-          </motion.div>
+            style={{ x: glowX1, y: glowY1 }} 
+            className="absolute w-[600px] h-[600px] md:w-[800px] md:h-[800px] bg-orange-500/20 rounded-full blur-[120px] pointer-events-none"
+          />
+          <motion.div 
+            style={{ x: glowX2, y: glowY2 }} 
+            className="absolute w-[400px] h-[400px] md:w-[600px] md:h-[600px] bg-yellow-400/20 rounded-full blur-[100px] pointer-events-none"
+          />
 
-          {/* Intro Text - Perfectly matches website theme */}
-          <motion.div 
-            style={{ opacity: titleOpacity, y: titleY, scale: titleScale }}
-            className="absolute flex flex-col items-center justify-center text-center z-10 px-4"
-          >
-            <div className="px-4 py-1.5 border border-gray-200 rounded-full text-xs font-bold bg-white shadow-[0_5px_15px_rgba(0,0,0,0.05)] flex items-center gap-2 mb-8">
-                Premium Scroll Design <span className="text-orange-500 text-base leading-none">✨</span>
-            </div>
-            <h1 className="text-[clamp(3.5rem,8vw,7rem)] font-black tracking-tight leading-[1.1] text-black">
-              Tanvir <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-400">Kabir</span>
-            </h1>
-            <p className="mt-6 text-lg md:text-2xl text-gray-500 font-medium max-w-xl mx-auto leading-relaxed">
-               Scaling e-commerce brands with surgical precision and data accuracy.
-            </p>
-          </motion.div>
-
-          {/* The Premium 3D Object / Card */}
-          <motion.div 
-            style={{ 
-              rotateX: cardRotateX, 
-              rotateY: cardRotateY, 
-              scale: cardScale, 
-              opacity: cardOpacity,
-              y: cardY,
-              transformStyle: "preserve-3d"
-            }}
-            className="absolute z-20 w-[90%] max-w-[900px] aspect-[4/3] md:aspect-[21/10] bg-white rounded-3xl md:rounded-[2.5rem] border border-white/60 shadow-[0_40px_80px_rgba(0,0,0,0.06),0_0_0_1px_rgba(0,0,0,0.02)] flex overflow-hidden group"
-          >
-             {/* Beautiful ambient glow inside the card */}
-             <div className="absolute inset-0 bg-gradient-to-br from-orange-50/80 via-transparent to-transparent opacity-100"></div>
+          <motion.div style={{ opacity: everythingOpacity }} className="w-full h-full absolute inset-0 flex items-center justify-center transform-gpu">
              
-             {/* Floating content inside the 3D card */}
-             <motion.div 
-                style={{ translateZ: innerZ }}
-                className="relative w-full h-full flex flex-col md:flex-row items-center justify-between p-8 md:p-12 gap-8"
-             >
-                <div className="flex flex-col w-full md:max-w-[45%] text-center md:text-left">
-                    <h2 className="text-3xl md:text-5xl font-black text-black leading-tight mb-6 tracking-tight">
-                        Transforming <br /> Ads into <span className="text-orange-500">Growth</span>
-                    </h2>
-                    <div className="flex gap-4 justify-center md:justify-start">
-                        <div className="bg-orange-500/10 px-5 py-3 rounded-2xl border border-orange-500/20 shadow-inner">
-                            <span className="block text-2xl md:text-3xl font-black text-orange-500">102+</span>
-                            <span className="text-[10px] md:text-xs font-bold text-orange-600/80 uppercase tracking-widest mt-1">Clients</span>
-                        </div>
-                        <div className="bg-gray-50 px-5 py-3 rounded-2xl border border-gray-100 shadow-inner">
-                            <span className="block text-2xl md:text-3xl font-black text-black">4 Yrs</span>
-                            <span className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Experience</span>
-                        </div>
-                    </div>
-                </div>
+              {/* --- LEFT SIDE: Floating background text --- */}
+              <motion.div 
+                style={{ y: leftTextY, rotate: leftTextRotate }}
+                className="absolute left-4 md:left-10 text-[8vw] md:text-[6vw] font-black text-black/5 whitespace-nowrap origin-center"
+              >
+                  DATA DRIVEN ADS
+              </motion.div>
 
-                <div className="w-full md:w-[50%] h-[200px] md:h-full relative rounded-2xl overflow-hidden shadow-2xl border border-gray-100 bg-gray-50 transform-gpu hover:scale-105 transition-transform duration-700">
-                    {/* Placeholder for an impressive image/dashboard mockup */}
-                    <div className="absolute inset-0 bg-gradient-to-tr from-black/40 via-transparent to-transparent z-10"></div>
-                    <div className="w-full h-full bg-[url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2426&auto=format&fit=crop')] bg-cover bg-center"></div>
-                    <div className="absolute bottom-4 left-4 z-20 px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-[10px] font-bold tracking-widest">
-                        DATA ANALYTICS
-                    </div>
-                </div>
-             </motion.div>
+              {/* --- LEFT SIDE: Animated Badge --- */}
+              <motion.div
+                style={{ x: badge1X, rotate: badge1Rotate, scale: badge1Scale }}
+                className="absolute left-[5%] md:left-[10%] top-[20%] md:top-[30%] bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl shadow-[0_20px_40px_rgba(0,0,0,0.1)] border border-orange-100 z-30"
+              >
+                  <div className="text-3xl md:text-5xl font-black text-orange-500">102+</div>
+                  <div className="text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest mt-1">Happy Clients</div>
+              </motion.div>
+
+              {/* --- RIGHT SIDE: Geometric Floating Shape --- */}
+              <motion.div
+                style={{ y: rightShapeY, rotate: rightShapeRotate, scale: rightShapeScale }}
+                className="absolute right-10 md:right-32 top-1/4 w-24 h-24 md:w-32 md:h-32 border-[8px] md:border-[12px] border-orange-500/10 rounded-2xl md:rounded-3xl"
+              />
+
+              {/* --- RIGHT SIDE: Animated Badge --- */}
+              <motion.div
+                style={{ x: badge2X, rotate: badge2Rotate, scale: badge2Scale }}
+                className="absolute right-[5%] md:right-[10%] bottom-[20%] md:bottom-[30%] bg-gradient-to-tr from-orange-500 to-yellow-500 p-4 md:p-6 rounded-2xl md:rounded-3xl shadow-[0_20px_40px_rgba(249,115,22,0.3)] text-white z-30"
+              >
+                  <div className="text-3xl md:text-5xl font-black">4 YRS</div>
+                  <div className="text-[10px] md:text-xs font-bold uppercase tracking-widest mt-1">Experience</div>
+              </motion.div>
+
+              {/* --- CENTER HERO PHOTO --- */}
+              <motion.div 
+                style={{ scale: photoScale, x: photoX, y: photoY, rotate: photoRotate }}
+                className="absolute z-40 w-[280px] h-[380px] md:w-[350px] md:h-[450px] rounded-[2rem] overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.2)] border-4 border-white"
+              >
+                  <div className="absolute inset-0 bg-orange-600/10 z-10"></div>
+                  {/* Using a placeholder portrait. When moved to the real site, we will use your real photo. */}
+                  <div className="w-full h-full bg-[url('https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&q=80')] bg-cover bg-center"></div>
+                  <div className="absolute bottom-6 left-0 w-full text-center z-20 flex justify-center">
+                     <span className="bg-black/80 backdrop-blur-md text-white px-4 py-2 rounded-full text-xs font-bold border border-white/20">
+                         (Here will be your actual photo)
+                     </span>
+                  </div>
+              </motion.div>
+
+              {/* --- SPLITTING TITLE --- */}
+              <div className="absolute z-50 flex flex-col md:flex-row gap-2 md:gap-8 w-full justify-center items-center pointer-events-none mix-blend-difference md:mix-blend-normal">
+                  <motion.h1 
+                    style={{ x: titleLeftX, opacity: titleOpacity, scale: titleScale }}
+                    className="text-[clamp(4rem,12vw,9rem)] font-black text-black leading-none drop-shadow-2xl md:drop-shadow-none"
+                  >
+                     Tanvir
+                  </motion.h1>
+                  <motion.h1 
+                    style={{ x: titleRightX, opacity: titleOpacity, scale: titleScale }}
+                    className="text-[clamp(4rem,12vw,9rem)] font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-yellow-500 leading-none drop-shadow-2xl md:drop-shadow-none"
+                  >
+                     Kabir
+                  </motion.h1>
+              </div>
+
+              {/* --- 3D CARDS FAN REVEAL --- */}
+              <motion.div
+                style={{ y: cardsGroupY, rotateX: cardsGroupRotateX, scale: cardsGroupScale, transformStyle: "preserve-3d" }}
+                className="absolute z-20 flex items-center justify-center w-full mt-[20vh] md:mt-0"
+              >
+                 {/* Left Sub-Card */}
+                 <motion.div 
+                   style={{ x: leftCardX, rotateZ: leftCardRotateZ }}
+                   className="absolute w-[260px] h-[360px] md:w-[300px] md:h-[400px] bg-white rounded-3xl shadow-2xl border border-gray-100 p-6 flex flex-col justify-end overflow-hidden"
+                 >
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10"></div>
+                    <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80')] bg-cover opacity-80"></div>
+                    <h3 className="relative z-20 text-2xl font-black text-white">Performance</h3>
+                    <p className="relative z-20 text-orange-400 font-bold tracking-widest uppercase text-xs mt-1">Marketing</p>
+                 </motion.div>
+
+                 {/* Right Sub-Card */}
+                 <motion.div 
+                   style={{ x: rightCardX, rotateZ: rightCardRotateZ }}
+                   className="absolute w-[260px] h-[360px] md:w-[300px] md:h-[400px] bg-white rounded-3xl shadow-2xl border border-gray-100 p-6 flex flex-col justify-end overflow-hidden"
+                 >
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10"></div>
+                    <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80')] bg-cover opacity-80"></div>
+                    <h3 className="relative z-20 text-2xl font-black text-white">Data Analytics</h3>
+                    <p className="relative z-20 text-orange-400 font-bold tracking-widest uppercase text-xs mt-1">Strategy</p>
+                 </motion.div>
+
+                 {/* Center Main Card */}
+                 <motion.div 
+                   style={{ translateZ: centerCardZ }}
+                   className="relative w-[300px] h-[400px] md:w-[350px] md:h-[450px] bg-gradient-to-br from-gray-900 to-black rounded-3xl shadow-[0_40px_100px_rgba(0,0,0,0.3)] border border-gray-700 p-8 flex flex-col items-center justify-center text-center z-10"
+                 >
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-orange-500/20 via-transparent to-transparent"></div>
+                    <h2 className="text-3xl md:text-4xl font-black text-white mb-4 relative z-10">Unlocking <br/><span className="text-orange-500">Growth</span></h2>
+                    <p className="text-gray-400 font-medium text-sm md:text-base relative z-10">Keep scrolling to enter the main website</p>
+                    <div className="mt-8 w-12 h-12 md:w-16 md:h-16 rounded-full border-t-2 border-r-2 border-orange-500 animate-spin relative z-10"></div>
+                 </motion.div>
+              </motion.div>
+
           </motion.div>
-
         </div>
       </div>
 
-      {/* The rest of the website appears smoothly from the bottom */}
-      <div className="min-h-screen bg-white relative z-30 pt-24 border-t border-gray-100 shadow-[0_-20px_40px_rgba(0,0,0,0.02)]">
+      <div className="min-h-screen bg-white relative z-30 pt-24 border-t border-gray-100 shadow-[0_-20px_40px_rgba(0,0,0,0.05)]">
          <div className="max-w-4xl mx-auto px-6 text-center">
             <h2 className="text-4xl md:text-6xl font-black text-black mb-6">Welcome to the Website</h2>
             <p className="text-lg md:text-xl text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
-                এই ডিজাইনটি আপনার ওয়েবসাইটের কালার থিম <strong>(#F9F9F6)</strong> ফলো করে তৈরি করা হয়েছে। 
-                এটি একটি প্রিমিয়াম, স্মুথ এবং প্রফেশনাল "Apple-style" স্ক্রল অ্যানিমেশন। কোনো ব্ল্যাক স্ক্রিন বা কনফিউশন নেই, এবং কোড ১০০% এরর-ফ্রি। 
+                এই ডিজাইনে আপনার ছবি, নাম এবং <strong>একসাথে প্রায় ৮-১০ টি আলাদা অ্যানিমেশন</strong> যুক্ত করা হয়েছে! 
+                ডান ও বাম পাশের ফাঁকা জায়গাগুলো উড়ন্ত ব্যাজ, টেক্সট এবং ইফেক্ট দিয়ে ভরিয়ে দেওয়া হয়েছে। 
             </p>
-            <Link href="/" className="inline-flex px-8 py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-black rounded-full shadow-[0_10px_30px_rgba(249,115,22,0.3)] hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(249,115,22,0.4)] transition-all duration-300">
+            <Link href="/" className="inline-flex px-8 py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-black rounded-full shadow-lg hover:-translate-y-1 transition-all">
                 Back to Main Site
             </Link>
          </div>
       </div>
-
     </div>
   );
 }
