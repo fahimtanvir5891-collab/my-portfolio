@@ -249,35 +249,6 @@ function HomeContent({ logos, projects, services, blogs, testimonials, homeData,
 
       <footer id="contact" className="relative z-20 bg-black pt-16 pb-8 border-t border-gray-800 mt-16">
         <div className="max-w-6xl mx-auto px-6 md:px-8">
-            
-            {/* Standardized Badge Grid - 3 Columns */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 justify-items-center">
-                
-                {/* 1. LinkedIn Badge */}
-                <div className="flex flex-col items-center bg-[#1D2226] p-4 rounded-2xl border border-gray-800 w-full max-w-[300px] h-[300px] overflow-hidden justify-center shadow-lg">
-                    <p className="text-white text-[10px] font-bold mb-3 uppercase tracking-widest">LinkedIn</p>
-                    <div className="badge-base LI-profile-badge" data-locale="en_US" data-size="medium" data-theme="dark" data-type="VERTICAL" data-vanity="tanvir-kabir-fahim" data-version="v1"></div>
-                </div>
-
-                {/* 2. FB Personal */}
-                <div className="flex flex-col items-center bg-white p-4 rounded-2xl border border-gray-800 w-full max-w-[300px] h-[300px] overflow-hidden justify-center shadow-lg">
-                    <p className="text-black text-[10px] font-bold mb-3 uppercase tracking-widest">Facebook</p>
-                    <div className="fb-page" data-href="https://www.facebook.com/md.tanvir.kabir.fahim" data-width="300" data-height="250" data-small-header="true" data-adapt-container-width="true" data-hide-cover="true" data-show-facepile="false"></div>
-                </div>
-
-                {/* 3. Instagram */}
-                <div className="flex flex-col items-center bg-white p-4 rounded-2xl border border-gray-800 w-full max-w-[300px] h-[300px] overflow-hidden justify-center shadow-lg group relative">
-                        <div className="absolute inset-0 bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 opacity-[0.03]"></div>
-                        <p className="text-black text-[10px] font-bold mb-3 uppercase tracking-widest relative z-10">Instagram</p>
-                        <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 p-[3px] mb-3">
-                            <div className="w-full h-full bg-white rounded-full overflow-hidden flex items-center justify-center border-2 border-white">
-                                {homeData?.profileImage && <Image src={urlFor(homeData.profileImage).url()} alt="IG" width={64} height={64} className="object-cover" />}
-                            </div>
-                        </div>
-                        <h3 className="text-black font-bold text-lg relative z-10">@fahim_inframe</h3>
-                        <a href="https://www.instagram.com/fahim_inframe/" target="_blank" rel="noopener noreferrer" className="mt-4 px-6 py-2 bg-black text-white text-xs font-bold rounded-full relative z-10 hover:bg-orange-500 transition-colors">View Profile</a>
-                </div>
-            </div>
 
             <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-16 bg-gradient-to-r from-gray-900 to-black p-8 rounded-3xl border border-gray-800 shadow-2xl">
                 <div className="text-center md:text-left"><h2 className="text-3xl md:text-4xl font-black mb-2 text-white">Ready to Scale?</h2><p className="text-gray-400 text-base font-medium">Let's build your growth strategy today.</p></div>
