@@ -210,6 +210,9 @@ function HomeContent({ logos, projects, services, blogs, testimonials, homeData,
   
   const projectIdFromUrl = searchParams.get("project");
 
+  const firstName = homeData?.profileName?.split(' ')[0] || "Tanvir";
+  const lastName = homeData?.profileName?.split(' ').slice(1).join(' ') || "Kabir";
+
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const springX = useSpring(mouseX, { stiffness: 500, damping: 28 });
