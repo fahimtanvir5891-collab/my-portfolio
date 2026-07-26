@@ -15,8 +15,6 @@ export default async function BlogPage() {
 
   return (
     <main className="min-h-screen bg-[#F9F9F6] text-black">
-      <Navbar config={siteConfig} />
-      
       <div className="max-w-6xl mx-auto px-4 md:px-10 pt-40 pb-20">
         <div className="text-center mb-24">
             <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-black mb-6">Marketing <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-600">Blog</span></h1>

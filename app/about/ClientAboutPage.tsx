@@ -9,8 +9,6 @@ import Navbar from "../components/Navbar";
 export default function ClientAboutPage({ aboutData, siteConfig }: any) {
   return (
     <main className="min-h-screen bg-[#F9F9F6] text-black selection:bg-orange-500 selection:text-white pb-20">
-      <Navbar config={siteConfig} />
-
       {/* 1. The Bold Hook (Hero Section) */}
       <section className="relative pt-40 pb-20 px-4 md:px-8 max-w-6xl mx-auto overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -55,7 +53,7 @@ export default function ClientAboutPage({ aboutData, siteConfig }: any) {
                      <motion.div 
                         initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.1 }}
                         key={idx} 
-                        className="bg-white p-8 md:p-10 rounded-3xl border border-gray-100 shadow-[0_10px_30px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_40px_rgba(249,115,22,0.08)] transition-all duration-300 group"
+                        className="bg-white/40 backdrop-blur-2xl p-8 md:p-10 rounded-3xl border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.05),0_0_0_1px_rgba(255,255,255,0.5)_inset] hover:shadow-[0_20px_40px_rgba(249,115,22,0.08)] transition-all duration-300 group"
                      >
                          <div className="w-12 h-12 bg-orange-50 text-orange-500 rounded-2xl flex items-center justify-center font-black text-2xl mb-6 group-hover:scale-110 transition-transform">0{idx + 1}</div>
                          <h3 className="text-2xl font-bold text-gray-900 mb-3">{skill.title}</h3>

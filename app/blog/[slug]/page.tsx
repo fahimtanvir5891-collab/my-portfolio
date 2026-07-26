@@ -41,7 +41,6 @@ export default async function BlogPostPage({ params }: any) {
   if (!blog) {
      return (
         <main className="min-h-screen bg-[#F9F9F6] text-black flex flex-col">
-            <Navbar config={siteConfig} />
             <div className="flex-grow flex items-center justify-center flex-col pt-32">
                 <h1 className="text-3xl md:text-5xl font-black text-gray-800 mb-4">Article Not Found!</h1>
                 <p className="text-gray-500 mb-8">Please check if the slug exactly matches your Sanity studio.</p>
@@ -53,8 +52,6 @@ export default async function BlogPostPage({ params }: any) {
 
   return (
     <main className="min-h-screen bg-[#F9F9F6] text-black">
-      <Navbar config={siteConfig} />
-
       <article className="max-w-3xl mx-auto px-4 md:px-8 pt-32 pb-24">
          <Link href="/blog" className="text-orange-500 font-bold mb-8 inline-block hover:-translate-x-2 transition-transform uppercase tracking-widest text-xs">
             ← Back to Articles
