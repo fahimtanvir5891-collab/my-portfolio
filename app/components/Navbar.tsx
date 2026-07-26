@@ -16,16 +16,18 @@ export default function Navbar({ config }: { config: any }) {
     { name: "Contact", href: "/contact" },
   ];
 
+  const liquidGlassClass = "bg-white/50 backdrop-blur-2xl border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.05),0_0_0_1px_rgba(255,255,255,0.5)_inset] rounded-[2rem]";
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-[#F9F9F6]/90 backdrop-blur-md border-b border-gray-200 transition-colors duration-300">
-      <div className="max-w-6xl mx-auto px-4 md:px-10 h-20 flex items-center justify-between">
+    <nav className={`fixed top-4 left-4 right-4 md:left-8 md:right-8 lg:max-w-6xl lg:mx-auto z-[9999] transition-all duration-300 ${liquidGlassClass}`}>
+      <div className="px-6 md:px-8 h-20 flex items-center justify-between">
         
         {/* লোগো */}
         <Link href="/" className="flex items-center">
           {config?.logo?.asset ? (
             <img src={urlFor(config.logo).url()} alt="Logo" className="h-10 w-auto object-contain" />
           ) : (
-            <div className="text-3xl font-black text-orange-500">TK.</div>
+            <div className="text-3xl font-black text-orange-500 drop-shadow-md">TK.</div>
           )}
         </Link>
 
@@ -43,7 +45,7 @@ export default function Navbar({ config }: { config: any }) {
           <Link href="/about" className="hidden md:inline-block px-8 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-sm font-black tracking-wide rounded-full hover:shadow-[0_10px_20px_rgba(249,115,22,0.3)] hover:-translate-y-1 transition-all duration-300">
             Hire Me
           </Link>
-          <button onClick={() => setIsOpen(!isOpen)} className="md:hidden text-black p-2 text-2xl">
+          <button onClick={() => setIsOpen(!isOpen)} className="md:hidden text-black p-2 text-2xl drop-shadow-md">
             {isOpen ? "✕" : "☰"}
           </button>
         </div>
@@ -52,19 +54,18 @@ export default function Navbar({ config }: { config: any }) {
       {/* মোবাইল মেনু */}
       {isOpen && (
         <>
-          {/* ওভারলে (Background shadow) */}
           <div 
-            className="md:hidden fixed inset-0 top-20 bg-black/30 backdrop-blur-sm z-40" 
+            className="md:hidden fixed inset-0 top-24 bg-black/10 backdrop-blur-sm z-40 rounded-3xl" 
             onClick={() => setIsOpen(false)} 
           />
           
-          <div className="md:hidden absolute top-20 left-0 right-0 bg-[#F9F9F6] border-b border-gray-200 flex flex-col p-4 shadow-2xl z-50">
+          <div className={`md:hidden absolute top-24 left-0 right-0 flex flex-col p-6 z-50 ${liquidGlassClass}`}>
             {links.map((link) => (
-              <Link key={link.name} href={link.href} onClick={() => setIsOpen(false)} className="py-4 text-gray-900 font-bold border-b border-gray-200 last:border-0 hover:text-orange-500 text-center">
+              <Link key={link.name} href={link.href} onClick={() => setIsOpen(false)} className="py-4 text-gray-900 font-bold border-b border-white/30 last:border-0 hover:text-orange-500 text-center text-lg">
                 {link.name}
               </Link>
             ))}
-            <Link href="/about" onClick={() => setIsOpen(false)} className="mt-6 text-center py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-black rounded-xl shadow-lg">
+            <Link href="/about" onClick={() => setIsOpen(false)} className="mt-6 text-center py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-black rounded-full shadow-lg">
               Hire Me
             </Link>
           </div>
