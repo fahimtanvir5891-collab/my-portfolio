@@ -51,16 +51,24 @@ export default function Navbar({ config }: { config: any }) {
 
       {/* মোবাইল মেনু */}
       {isOpen && (
-        <div className="md:hidden absolute top-20 left-0 right-0 bg-[#F9F9F6] border-b border-gray-200 flex flex-col p-4 shadow-2xl">
-          {links.map((link) => (
-            <Link key={link.name} href={link.href} onClick={() => setIsOpen(false)} className="py-4 text-gray-900 font-bold border-b border-gray-200 last:border-0 hover:text-orange-500 text-center">
-              {link.name}
+        <>
+          {/* ওভারলে (Background shadow) */}
+          <div 
+            className="md:hidden fixed inset-0 top-20 bg-black/30 backdrop-blur-sm z-40" 
+            onClick={() => setIsOpen(false)} 
+          />
+          
+          <div className="md:hidden absolute top-20 left-0 right-0 bg-[#F9F9F6] border-b border-gray-200 flex flex-col p-4 shadow-2xl z-50">
+            {links.map((link) => (
+              <Link key={link.name} href={link.href} onClick={() => setIsOpen(false)} className="py-4 text-gray-900 font-bold border-b border-gray-200 last:border-0 hover:text-orange-500 text-center">
+                {link.name}
+              </Link>
+            ))}
+            <Link href="/about" onClick={() => setIsOpen(false)} className="mt-6 text-center py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-black rounded-xl shadow-lg">
+              Hire Me
             </Link>
-          ))}
-          <Link href="/about" onClick={() => setIsOpen(false)} className="mt-6 text-center py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-black rounded-xl shadow-lg">
-            Hire Me
-          </Link>
-        </div>
+          </div>
+        </>
       )}
     </nav>
   );

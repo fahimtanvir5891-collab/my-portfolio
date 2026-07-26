@@ -40,7 +40,7 @@ const ptComponents = {
     normal: ({children}: any) => <p className="text-gray-600 text-base md:text-lg leading-relaxed font-medium">{children}</p>,
     h1: ({children}: any) => {
         return (
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tight text-black mb-0 leading-tight z-20 relative">
+            <h1 className="text-[clamp(2.5rem,5vw,4.5rem)] font-black tracking-tight text-black mb-0 leading-tight z-20 relative">
                 {children}
             </h1>
         )
@@ -126,7 +126,7 @@ function HomeContent({ logos, projects, services, blogs, testimonials, homeData,
                 {homeData?.heroHeading ? (
                     <PortableText value={homeData.heroHeading} components={ptComponents} />
                 ) : (
-                    <h1 className="text-5xl md:text-7xl font-black tracking-tight text-black mb-0 leading-tight">
+                    <h1 className="text-[clamp(2.5rem,5vw,4.5rem)] font-black tracking-tight text-black mb-0 leading-tight">
                         I'm <span className="text-orange-500">Tanvir</span>, <br /> A Data-Driven Ads Master
                     </h1>
                 )}
@@ -156,10 +156,10 @@ function HomeContent({ logos, projects, services, blogs, testimonials, homeData,
                 <div className="absolute inset-0 pointer-events-none z-20">
                     {homeData?.skillBadges?.map((badge: any, idx: number) => {
                         const positions = [
-                            "top-[10%] left-0 md:left-12",
-                            "top-[30%] right-0 md:right-8",
-                            "bottom-[35%] left-2 md:left-8",
-                            "bottom-[15%] right-2 md:right-16"
+                            "top-[5%] left-2 md:left-8",
+                            "top-[25%] right-2 md:right-8",
+                            "bottom-[40%] left-2 md:left-8",
+                            "bottom-[20%] right-2 md:right-16"
                         ];
                         return (
                             <motion.div 

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { urlFor } from "./sanity";
 import { motion, AnimatePresence } from "framer-motion";
@@ -21,15 +22,16 @@ function DarazZoomImage({ src, alt }: { src: string, alt: string }) {
     return (
        <div className="w-full flex justify-center items-center bg-gray-50 rounded-xl md:rounded-2xl shadow-inner border border-gray-100 py-4 md:py-8">
           <div 
-            className="relative overflow-hidden cursor-crosshair rounded-lg md:rounded-xl shadow-[0_10px_20px_rgba(0,0,0,0.08)] w-full flex justify-center"
+            className="relative overflow-hidden cursor-crosshair rounded-lg md:rounded-xl shadow-[0_10px_20px_rgba(0,0,0,0.08)] w-full h-[40vh] md:h-[55vh] flex justify-center"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             onMouseMove={handleMouseMove}
           >
-             <img 
+             <Image 
                 src={src} 
                 alt={alt} 
-                className="block w-auto h-auto max-w-full max-h-[40vh] md:max-h-[55vh] transition-transform duration-200 ease-out" 
+                fill
+                className="object-contain transition-transform duration-200 ease-out" 
                 style={{ transformOrigin: position, transform: isHovered ? "scale(2.5)" : "scale(1)" }} 
              />
           </div>
@@ -84,11 +86,14 @@ export default function Portfolio({ projects, openProject, setOpenProject, isHom
                     onClick={() => setOpenProject(proj)}
                   >
                      {proj.image && (
-                         <img 
-                           src={urlFor(proj.image).url()} 
-                           alt={proj.title} 
-                           className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700" 
-                         />
+                         <div className="relative w-full h-[250px] md:h-[350px]">
+                           <Image 
+                             src={urlFor(proj.image).url()} 
+                             alt={proj.title} 
+                             fill
+                             className="object-cover group-hover:scale-105 transition-transform duration-700" 
+                           />
+                         </div>
                      )}
                      
                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3 md:p-5">
@@ -108,12 +113,12 @@ export default function Portfolio({ projects, openProject, setOpenProject, isHom
            )}
 
            <AnimatePresence>
-           {/* পপ-আপ উইন্ডোর z-index 9990 করা হয়েছে যাতে এটি ন্যাভবারের উপরে থাকে */}
+           {/* পপ-আপ উইন্ডোর z-index 60 করা হয়েছে যাতে এটি ন্যাভবারের উপরে থাকে */}
            {openProject && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[9990] bg-[#F9F9F6]/95 backdrop-blur-xl overflow-y-auto p-3 md:p-8 flex flex-col">
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[60] bg-[#F9F9F6]/95 backdrop-blur-xl overflow-y-auto p-3 md:p-8 flex flex-col">
                  
-                 {/* ক্লোজ বাটনটি z-[9999] দেওয়া হয়েছে যাতে ওয়েবসাইটের কোনো কিছুই একে ঢাকতে না পারে */}
-                 <button onClick={() => setOpenProject(null)} className="fixed top-4 right-4 md:top-10 md:right-10 w-10 h-10 bg-black text-white rounded-full font-bold text-lg hover:bg-orange-500 transition-colors z-[9999] shadow-xl flex items-center justify-center">✕</button>
+                 {/* ক্লোজ বাটনটি z-[70] দেওয়া হয়েছে যাতে ওয়েবসাইটের কোনো কিছুই একে ঢাকতে না পারে */}
+                 <button onClick={() => setOpenProject(null)} className="fixed top-4 right-4 md:top-10 md:right-10 w-10 h-10 bg-black text-white rounded-full font-bold text-lg hover:bg-orange-500 transition-colors z-[70] shadow-xl flex items-center justify-center">✕</button>
                  
                  <div className="max-w-4xl mx-auto w-full pt-16 md:pt-24 pb-16">
                     <h2 className="text-2xl md:text-5xl font-black text-black mb-6 md:mb-8 text-center px-4 md:px-8">{openProject.title}</h2>
