@@ -33,15 +33,15 @@ function AnimatedCounter({ to, text, index }: { to: number; text: string; index:
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.8, delay: index * 0.1 }}
-      className={`flex flex-col justify-center px-8 py-6 bg-white/40 backdrop-blur-2xl border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.05),0_0_0_1px_rgba(255,255,255,0.5)_inset] rounded-[2rem] border-t-0 md:border-t ${index > 0 ? 'md:border-l' : ''} md:rounded-none ${index === 0 ? 'md:rounded-l-[2rem]' : ''} ${index === 2 ? 'md:rounded-r-[2rem]' : ''}`}
+      className={`flex flex-col justify-center px-6 py-4 bg-white/40 backdrop-blur-2xl border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.05),0_0_0_1px_rgba(255,255,255,0.5)_inset] rounded-[1.5rem] border-t-0 md:border-t ${index > 0 ? 'md:border-l' : ''} md:rounded-none ${index === 0 ? 'md:rounded-l-[1.5rem]' : ''} ${index === 2 ? 'md:rounded-r-[1.5rem]' : ''}`}
     >
-      <div className="text-4xl md:text-6xl font-black text-black flex items-center mb-1"><span ref={nodeRef}>0</span><span className="text-orange-500 ml-1">+</span></div>
-      <p className="text-xs md:text-sm font-bold text-gray-500 uppercase tracking-widest">{text}</p>
+      <div className="text-2xl sm:text-3xl md:text-4xl font-black text-black flex items-center mb-0.5"><span ref={nodeRef}>0</span><span className="text-orange-500 ml-1">+</span></div>
+      <p className="text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest">{text}</p>
     </motion.div>
   );
 }
 
-const liquidGlassClass = "bg-white/40 backdrop-blur-2xl border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.05),0_0_0_1px_rgba(255,255,255,0.5)_inset] rounded-[2rem]";
+const liquidGlassClass = "bg-white/40 backdrop-blur-2xl border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.05),0_0_0_1px_rgba(255,255,255,0.5)_inset] rounded-[1.5rem]";
 
 function HeroHeynesh({ homeData }: any) {
   const firstName = homeData?.profileName?.split(' ')[0] || "Tanvir";
@@ -50,41 +50,41 @@ function HeroHeynesh({ homeData }: any) {
   const bio = homeData?.profileBio?.[0]?.children?.[0]?.text || "Started with a passion for marketing. Evolved into a data-driven ads master. Generating massive ROAS for e-commerce brands globally.";
 
   return (
-    <section className="relative min-h-[100vh] w-full flex flex-col justify-center overflow-hidden pt-32 pb-16 px-4 md:px-8 bg-[#F9F9F6]">
+    <section className="relative min-h-[85vh] w-full flex flex-col justify-center overflow-hidden pt-28 pb-12 px-4 md:px-8 bg-[#F9F9F6]">
        {/* Background Glows */}
-       <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-orange-400/20 blur-[120px] rounded-full pointer-events-none" />
-       <div className="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-yellow-400/20 blur-[120px] rounded-full pointer-events-none" />
+       <div className="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] bg-orange-400/20 blur-[100px] rounded-full pointer-events-none" />
+       <div className="absolute bottom-[-10%] right-[-10%] w-[35vw] h-[35vw] bg-yellow-400/20 blur-[100px] rounded-full pointer-events-none" />
        
-       <div className="max-w-7xl mx-auto w-full relative z-10 flex flex-col items-center">
+       <div className="max-w-5xl mx-auto w-full relative z-10 flex flex-col items-center">
            
            {/* Floating Image Component */}
            <motion.div 
-              initial={{ y: 50, opacity: 0, rotate: -5 }}
+              initial={{ y: 30, opacity: 0, rotate: -3 }}
               animate={{ y: 0, opacity: 1, rotate: 0 }}
-              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-              className={`relative w-[180px] h-[240px] md:w-[240px] md:h-[320px] flex items-center justify-center p-2 mb-8 md:mb-12 ${liquidGlassClass} shadow-[0_20px_50px_rgba(0,0,0,0.1)] group`}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              className={`relative w-[130px] h-[170px] md:w-[170px] md:h-[220px] flex items-center justify-center p-2 mb-6 md:mb-8 ${liquidGlassClass} shadow-[0_15px_35px_rgba(0,0,0,0.08)] group`}
            >
-                <div className="absolute inset-0 bg-gradient-to-tr from-white/40 to-transparent rounded-[2rem] pointer-events-none"></div>
-                <div className="w-full h-full rounded-[1.5rem] overflow-hidden relative">
+                <div className="absolute inset-0 bg-gradient-to-tr from-white/40 to-transparent rounded-[1.5rem] pointer-events-none"></div>
+                <div className="w-full h-full rounded-[1.2rem] overflow-hidden relative">
                    <Image src={imageSrc} alt="Profile" fill className="object-cover object-bottom transition-transform duration-700 group-hover:scale-105" priority />
                 </div>
            </motion.div>
 
            {/* Typography */}
-           <div className="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-6 text-center w-full">
+           <div className="flex flex-col md:flex-row items-center justify-center gap-1.5 md:gap-4 text-center w-full">
                <motion.h1 
-                  initial={{ y: 50, opacity: 0 }}
+                  initial={{ y: 30, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 1, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-                  className="text-[clamp(4rem,10vw,9rem)] font-black text-black leading-none tracking-tighter"
+                  transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+                  className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-black leading-none tracking-tight"
                >
                  {firstName}
                </motion.h1>
                <motion.h1 
-                  initial={{ y: 50, opacity: 0 }}
+                  initial={{ y: 30, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                  className="text-[clamp(4rem,10vw,9rem)] font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-yellow-500 leading-none tracking-tighter"
+                  transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                  className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-yellow-500 leading-none tracking-tight"
                >
                  {lastName}
                </motion.h1>
@@ -92,12 +92,12 @@ function HeroHeynesh({ homeData }: any) {
            
            {/* Bio / Description */}
            <motion.div 
-              initial={{ y: 30, opacity: 0 }}
+              initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              className="mt-8 md:mt-12 max-w-3xl text-center"
+              transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="mt-6 md:mt-8 max-w-2xl text-center px-2"
            >
-               <p className="text-xl md:text-3xl text-gray-600 font-medium leading-relaxed tracking-tight">
+               <p className="text-base sm:text-lg md:text-xl text-gray-600 font-medium leading-relaxed tracking-tight">
                  {bio}
                </p>
            </motion.div>
@@ -106,14 +106,14 @@ function HeroHeynesh({ homeData }: any) {
            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 0.8 }}
-              className="mt-16 md:mt-24 flex flex-col items-center gap-4"
+              transition={{ duration: 0.8, delay: 0.5 }}
+              className="mt-10 md:mt-14 flex flex-col items-center gap-2"
            >
-               <div className="w-8 h-12 rounded-full border-2 border-orange-500/30 flex justify-center p-1">
+               <div className="w-6 h-10 rounded-full border-2 border-orange-500/30 flex justify-center p-1">
                    <motion.div 
-                       animate={{ y: [0, 16, 0] }} 
+                       animate={{ y: [0, 12, 0] }} 
                        transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }} 
-                       className="w-1.5 h-3 bg-orange-500 rounded-full"
+                       className="w-1.5 h-2.5 bg-orange-500 rounded-full"
                    />
                </div>
            </motion.div>
