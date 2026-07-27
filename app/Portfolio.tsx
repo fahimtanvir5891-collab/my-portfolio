@@ -103,7 +103,7 @@ export default function Portfolio({
         </h2>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 grid auto-rows-fr gap-6 md:gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 relative z-10">
+      <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 relative z-10">
         {displayProjects.map((proj: any, idx: number) => {
           const numStr = (idx + 1).toString().padStart(2, '0');
           return (
@@ -113,7 +113,7 @@ export default function Portfolio({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: idx * 0.1 }}
-              className="group relative rounded-xl overflow-hidden cursor-pointer bg-neutral-900 border border-black/10 shadow-[0_10px_25px_rgba(0,0,0,0.07)] hover:shadow-[0_20px_40px_rgba(249,115,22,0.15)] transition-all duration-500"
+              className="group relative rounded-[2rem] overflow-hidden cursor-pointer aspect-[16/11] md:aspect-[16/10] bg-neutral-900 border border-black/10 shadow-[0_10px_25px_rgba(0,0,0,0.07)] hover:shadow-[0_20px_40px_rgba(249,115,22,0.15)] transition-all duration-500"
               onClick={() => setOpenProject(proj)}
             >
               {proj.image && (
